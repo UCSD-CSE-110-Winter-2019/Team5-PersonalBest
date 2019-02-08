@@ -7,12 +7,154 @@
     tools:context=".MainActivity">
 
     <TextView
+        android:id="@+id/goal_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:text="@string/goal_label"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/goal_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/defaultnum"
+        android:textSize="24sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/goal_label" />
+
+    <TextView
+        android:id="@+id/complete_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/complete_label"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/goal_content" />
+
+    <TextView
+        android:id="@+id/complete_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/defaultnum"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/complete_label" />
+
+    <TextView
+        android:id="@+id/remaining_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/remaining_label"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/complete_content"/>
+
+    <TextView
+        android:id="@+id/remaining_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/defaultnum"
+        android:textSize="24sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remaining_label" />
+
+    <Button
+        android:id="@+id/start_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/start_button_label"
+        android:layout_marginTop="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remaining_content" />
+    
+    <TextView
+        android:id="@+id/exercise_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exercise_label"
+        android:textSize="30sp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_button" />
+
+    <TextView
+        android:id="@+id/exercise_step_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/exercise_step_label"
+        android:textSize="20sp"
+        android:layout_marginLeft="20sp"
+        android:layout_marginTop="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_label"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/exercise_step_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/defaultnum"
+        android:layout_marginTop="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_label"
+        app:layout_constraintLeft_toRightOf="@id/exercise_step_label"/>
+
+    <TextView
+        android:id="@+id/exercise_time_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/exercise_time_label"
+        android:layout_marginLeft="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_step_label"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/exercise_time_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/defaultnum"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_step_label"
+        app:layout_constraintLeft_toRightOf="@id/exercise_time_label"/>
+
+    <TextView
+        android:id="@+id/exercise_speed_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/exercise_speed_label"
+        android:layout_marginLeft="20sp"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_time_label"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+    <TextView
+        android:id="@+id/exercise_speed_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:text="@string/defaultnum"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_time_label"
+        app:layout_constraintLeft_toRightOf="@id/exercise_speed_label"/>
+
+    <Button
+        android:id="@+id/end_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="160dp"
+        android:text="@string/end_button_label"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/start_button" />
+
+
+
 
 </android.support.constraint.ConstraintLayout>
