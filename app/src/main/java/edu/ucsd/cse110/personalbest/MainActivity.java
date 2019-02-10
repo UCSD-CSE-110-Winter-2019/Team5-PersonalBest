@@ -1,7 +1,6 @@
 package edu.ucsd.cse110.personalbest;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -10,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
@@ -23,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
     private String fitnessServiceKey = "GOOGLE_FIT";
+    private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
 
     private static int state=0; //0 for standby, 1 for active
@@ -36,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView goal_content;
     private TextView complete_content;
     private TextView remaining_content;
+    private Button tmp_update_button;
     private long goal = 5000;
 
    /* private class updateTask extends AsyncTask<String,String,String>{
@@ -107,7 +107,14 @@ public class MainActivity extends AppCompatActivity {
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
         fitnessService.setup();
 
-        fitnessService.updateStepCount();
+        tmp_update_button = findViewById(R.id.tmp_update_button);
+        tmp_update_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fitnessService.updateStepCount();
+            }
+        });
+
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
         remaining_content = findViewById(R.id.remaining_content);
@@ -168,6 +175,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//       If authentication was required during google fit setup, this will be called after the user authenticates
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == fitnessService.getRequestCode()) {
+                fitnessService.updateStepCount();
+            }
+        } else {
+            Log.e(TAG, "ERROR, google fit result code: " + resultCode);
+        }
+    }
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal - stepCount;
@@ -176,6 +194,5 @@ public class MainActivity extends AppCompatActivity {
 
     public void setGoalCount(long goal) {
         goal_content.setText(String.valueOf(goal));
-
     }
 }
