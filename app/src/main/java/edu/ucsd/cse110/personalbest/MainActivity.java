@@ -1,16 +1,33 @@
 package edu.ucsd.cse110.personalbest;
 
+<<<<<<< HEAD
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+=======
+import android.graphics.Color;
+>>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+
+import edu.ucsd.cse110.personalbest.fitness.FitnessService;
+import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
+import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
+    private String fitnessServiceKey = "GOOGLE_FIT";
+    private FitnessService fitnessService;
 
     private static int state=0; //0 for standby, 1 for active
     private TextView etic;
@@ -20,29 +37,38 @@ public class MainActivity extends AppCompatActivity {
     private TextView etil;
     private TextView espl;
     private TextView estl;
+<<<<<<< HEAD
+    private TextView goal_content;
+    private TextView complete_content;
+    private TextView remaining_content;
+    private long goal = 5000;
+
    /* private class updateTask extends AsyncTask<String,String,String>{
+=======
+    /* private class updateTask extends AsyncTask<String,String,String>{
+>>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
 
-        @Override
-        protected String doInBackground(String... strings) {
-            int step=100000;
-            while(true){
-                try{
-                    Thread.sleep(step);
-                    String[] publishable=new String[2];
-                    publishable[0]="";//Normal update value
-                    publishable[1]="";//Normal update value
-                    publishProgress();
-                }
-                catch(InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        }
+         @Override
+         protected String doInBackground(String... strings) {
+             int step=100000;
+             while(true){
+                 try{
+                     Thread.sleep(step);
+                     String[] publishable=new String[2];
+                     publishable[0]="";//Normal update value
+                     publishable[1]="";//Normal update value
+                     publishProgress();
+                 }
+                 catch(InterruptedException e){
+                     e.printStackTrace();
+                 }
+             }
+         }
 
-        protected void onProgressUpdate(String... text){
-            //Normal updates here
-        }
-    }*/
+         protected void onProgressUpdate(String... text){
+             //Normal updates here
+         }
+     }*/
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
         @Override
@@ -79,6 +105,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
+            @Override
+            public FitnessService create(MainActivity mainActivity) {
+                return new GoogleFitAdapter(mainActivity);
+            }
+        });
+        fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
+        fitnessService.setup();
+
+        fitnessService.updateStepCount();
+        goal_content = findViewById(R.id.goal_content);
+        complete_content = findViewById(R.id.complete_content);
+        remaining_content = findViewById(R.id.remaining_content);
+
+        this.setGoalCount(this.goal);
+
+
         if(state==0) {
             etic = findViewById(R.id.exercise_time_content);
             espc = findViewById(R.id.exercise_speed_content);
@@ -117,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
             espl.setVisibility(View.VISIBLE);
             etil.setVisibility(View.VISIBLE);
             estl.setVisibility(View.VISIBLE);
+            seb.setTextColor(Color.parseColor("#ff0000"));
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
         }
@@ -130,6 +175,20 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
+            seb.setTextColor(Color.parseColor("#000000"));
         }
     }
+
+    public void setStepCount(long stepCount) {
+        complete_content.setText(String.valueOf(stepCount));
+        long remaining = this.goal - stepCount;
+        remaining_content.setText(String.valueOf(remaining));
+    }
+
+    public void setGoalCount(long goal) {
+        goal_content.setText(String.valueOf(goal));
+
+    }
 }
+
+
