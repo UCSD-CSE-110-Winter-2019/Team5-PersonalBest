@@ -1,5 +1,6 @@
 package edu.ucsd.cse110.personalbest;
 
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -20,29 +21,29 @@ public class MainActivity extends AppCompatActivity {
     private TextView etil;
     private TextView espl;
     private TextView estl;
-   /* private class updateTask extends AsyncTask<String,String,String>{
+    /* private class updateTask extends AsyncTask<String,String,String>{
 
-        @Override
-        protected String doInBackground(String... strings) {
-            int step=100000;
-            while(true){
-                try{
-                    Thread.sleep(step);
-                    String[] publishable=new String[2];
-                    publishable[0]="";//Normal update value
-                    publishable[1]="";//Normal update value
-                    publishProgress();
-                }
-                catch(InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        }
+         @Override
+         protected String doInBackground(String... strings) {
+             int step=100000;
+             while(true){
+                 try{
+                     Thread.sleep(step);
+                     String[] publishable=new String[2];
+                     publishable[0]="";//Normal update value
+                     publishable[1]="";//Normal update value
+                     publishProgress();
+                 }
+                 catch(InterruptedException e){
+                     e.printStackTrace();
+                 }
+             }
+         }
 
-        protected void onProgressUpdate(String... text){
-            //Normal updates here
-        }
-    }*/
+         protected void onProgressUpdate(String... text){
+             //Normal updates here
+         }
+     }*/
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
         @Override
@@ -117,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
             espl.setVisibility(View.VISIBLE);
             etil.setVisibility(View.VISIBLE);
             estl.setVisibility(View.VISIBLE);
+            seb.setTextColor(Color.parseColor("#ff0000"));
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
         }
@@ -130,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
+            seb.setTextColor(Color.parseColor("#000000"));
         }
     }
 }
+
+
