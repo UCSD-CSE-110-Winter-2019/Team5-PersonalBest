@@ -1,9 +1,13 @@
 package edu.ucsd.cse110.personalbest;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+=======
+import android.graphics.Color;
+>>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
 =======
 import android.graphics.Color;
 >>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
@@ -38,12 +42,16 @@ public class MainActivity extends AppCompatActivity {
     private TextView espl;
     private TextView estl;
 <<<<<<< HEAD
+<<<<<<< HEAD
     private TextView goal_content;
     private TextView complete_content;
     private TextView remaining_content;
     private long goal = 5000;
 
    /* private class updateTask extends AsyncTask<String,String,String>{
+=======
+    /* private class updateTask extends AsyncTask<String,String,String>{
+>>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
 =======
     /* private class updateTask extends AsyncTask<String,String,String>{
 >>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
