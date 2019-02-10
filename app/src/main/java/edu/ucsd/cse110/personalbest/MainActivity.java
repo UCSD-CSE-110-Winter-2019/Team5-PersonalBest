@@ -1,16 +1,8 @@
 package edu.ucsd.cse110.personalbest;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-=======
-import android.graphics.Color;
->>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
-=======
-import android.graphics.Color;
->>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -41,42 +33,34 @@ public class MainActivity extends AppCompatActivity {
     private TextView etil;
     private TextView espl;
     private TextView estl;
-<<<<<<< HEAD
-<<<<<<< HEAD
     private TextView goal_content;
     private TextView complete_content;
     private TextView remaining_content;
     private long goal = 5000;
 
    /* private class updateTask extends AsyncTask<String,String,String>{
-=======
-    /* private class updateTask extends AsyncTask<String,String,String>{
->>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
-=======
-    /* private class updateTask extends AsyncTask<String,String,String>{
->>>>>>> 4e63cac9d2fa56f7969ddfb315ddbef7f0409b75
 
-         @Override
-         protected String doInBackground(String... strings) {
-             int step=100000;
-             while(true){
-                 try{
-                     Thread.sleep(step);
-                     String[] publishable=new String[2];
-                     publishable[0]="";//Normal update value
-                     publishable[1]="";//Normal update value
-                     publishProgress();
-                 }
-                 catch(InterruptedException e){
-                     e.printStackTrace();
-                 }
-             }
-         }
+        @Override
+        protected String doInBackground(String... strings) {
+            int step=100000;
+            while(true){
+                try{
+                    Thread.sleep(step);
+                    String[] publishable=new String[2];
+                    publishable[0]="";//Normal update value
+                    publishable[1]="";//Normal update value
+                    publishProgress();
+                }
+                catch(InterruptedException e){
+                    e.printStackTrace();
+                }
+            }
+        }
 
-         protected void onProgressUpdate(String... text){
-             //Normal updates here
-         }
-     }*/
+        protected void onProgressUpdate(String... text){
+            //Normal updates here
+        }
+    }*/
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
         @Override
@@ -127,7 +111,6 @@ public class MainActivity extends AppCompatActivity {
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
         remaining_content = findViewById(R.id.remaining_content);
-
         this.setGoalCount(this.goal);
 
 
@@ -169,7 +152,6 @@ public class MainActivity extends AppCompatActivity {
             espl.setVisibility(View.VISIBLE);
             etil.setVisibility(View.VISIBLE);
             estl.setVisibility(View.VISIBLE);
-            seb.setTextColor(Color.parseColor("#ff0000"));
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
         }
@@ -183,7 +165,6 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
-            seb.setTextColor(Color.parseColor("#000000"));
         }
     }
 
@@ -198,5 +179,3 @@ public class MainActivity extends AppCompatActivity {
 
     }
 }
-
-
