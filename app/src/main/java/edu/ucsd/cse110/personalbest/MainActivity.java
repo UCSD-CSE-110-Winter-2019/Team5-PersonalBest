@@ -20,7 +20,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
-    public String fitnessServiceKey = "GOOGLE_FIT";
+    private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
 
