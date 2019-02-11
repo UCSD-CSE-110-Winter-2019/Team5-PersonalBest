@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import junit.framework.Assert;
 
+import org.apache.tools.ant.Main;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -57,8 +58,9 @@ public class StepTest {
                 return new TestFitnessService(mainActivity);
             }
         });
-        activity = Robolectric.buildActivity(MainActivity.class).create().get();
-
+        Intent intent = new Intent(RuntimeEnvironment.application, MainActivity.class);
+        intent.putExtra(MainActivity.FITNESS_SERVICE_KEY, TEST_SERVICE);
+        activity = Robolectric.buildActivity(MainActivity.class, intent).create().get();
 
         textSteps = activity.findViewById(R.id.complete_content);
         btnUpdateSteps = activity.findViewById(R.id.tmp_update_button);
@@ -77,9 +79,9 @@ public class StepTest {
     @Test
     public void updateTest() {
         btnUpdateSteps.performClick();
-        assertEquals("", textSteps.getText().toString());
+        assertEquals("1337", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
-        assertEquals("", remaining_content.getText().toString());
+        assertEquals("3663", remaining_content.getText().toString());
     }
 
     private class TestFitnessService implements FitnessService {
