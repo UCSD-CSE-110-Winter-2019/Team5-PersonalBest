@@ -18,7 +18,7 @@ import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-
+//Test push Chingyen huang
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
