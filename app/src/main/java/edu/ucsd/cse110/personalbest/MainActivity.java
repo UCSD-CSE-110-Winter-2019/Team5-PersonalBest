@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
@@ -18,7 +19,7 @@ import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
-//Test push Chingyen huang
+
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
@@ -38,29 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private Button tmp_update_button;
     private long goal = 5000;
 
-   /* private class updateTask extends AsyncTask<String,String,String>{
-
-        @Override
-        protected String doInBackground(String... strings) {
-            int step=100000;
-            while(true){
-                try{
-                    Thread.sleep(step);
-                    String[] publishable=new String[2];
-                    publishable[0]="";//Normal update value
-                    publishable[1]="";//Normal update value
-                    publishProgress();
-                }
-                catch(InterruptedException e){
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        protected void onProgressUpdate(String... text){
-            //Normal updates here
-        }
-    }*/
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
         @Override
@@ -68,11 +46,13 @@ public class MainActivity extends AppCompatActivity {
             int step=1000;
             final long currentTime=Calendar.getInstance().getTimeInMillis()/1000;
             IntentionalStep walk=new IntentionalStep(currentTime);
+            final IncidentalStep starting=new IncidentalStep(Integer.parseInt(complete_content.getText().toString()));
             while(state==1){
                 try{
                     Thread.sleep(step);
                     String[] publishable=new String[3];
-                    walk.setStep(300);//Todo
+                    fitnessService.updateStepCount();
+                    walk.setStep(Integer.parseInt(complete_content.getText().toString())-starting.getStep());
                     walk.setTime(Calendar.getInstance().getTimeInMillis()/1000);
                     publishable[0]=""+walk.getStep();
                     publishable[1]=""+walk.getTimeElapsed();
@@ -83,14 +63,14 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
             }
-            return "";
+            return "Congratulations! You walked "+walk.getStep()+" steps during this workout.";
         }
 
         protected void onProgressUpdate(String... text){
 
-            estc.setText(text[0]);
-            etic.setText(text[1]);
-            espc.setText(text[2]);
+            estc.setText(text[0]+" steps");
+            etic.setText(text[1]+" seconds");
+            espc.setText(text[2]+" km/h");
         }
     }
     @Override
