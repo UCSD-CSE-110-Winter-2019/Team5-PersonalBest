@@ -5,6 +5,7 @@ public class IncidentalStep implements Step {
     IncidentalStep(){
         this.step=0;
     }
+    IncidentalStep(int step){this.step=step;}
     public void setStep(int step){
         this.step=step;
     }
