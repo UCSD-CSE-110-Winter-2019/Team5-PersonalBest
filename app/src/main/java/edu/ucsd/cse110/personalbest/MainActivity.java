@@ -2,7 +2,10 @@ package edu.ucsd.cse110.personalbest;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,6 +19,7 @@ import edu.ucsd.cse110.personalbest.fitness.FitnessService;
 import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
 import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 
+import java.time.LocalTime;
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
-
     private static int state=0; //0 for standby, 1 for active
     private TextView etic;
     private TextView espc;
@@ -38,6 +41,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView remaining_content;
     private Button tmp_update_button;
     private long goal = 5000;
+
+    private SharedPreferences stepData;
+    private LocalTime savePrevStepTime;
+
 
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
@@ -73,11 +80,21 @@ public class MainActivity extends AppCompatActivity {
             espc.setText(text[2]+" km/h");
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        stepData = getSharedPreferences("StepData", MODE_PRIVATE);
+        stepData.edit().putInt("first", 0)
+                        .putInt("second", 0)
+                        .putInt("third", 0)
+                        .putInt("fourth",0)
+                        .putInt("fifth", 0)
+                        .putInt("sixth", 0)
+                        .putInt("seventh", 0).commit();
+        savePrevStepTime = LocalTime.parse("23:59:59");
         FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
             @Override
             public FitnessService create(MainActivity mainActivity) {
