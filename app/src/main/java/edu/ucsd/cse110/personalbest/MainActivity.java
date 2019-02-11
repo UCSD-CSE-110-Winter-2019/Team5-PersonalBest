@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
-    private long goal = 5000;
+    private Goal goal = new Goal(5000);
 
     private SharedPreferences stepData;
     private LocalTime savePrevStepTime;
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
         remaining_content = findViewById(R.id.remaining_content);
-        this.setGoalCount(this.goal);
+        this.setGoalCount(this.goal.getStep());
 
 
         if(state==0) {
@@ -189,7 +189,7 @@ public class MainActivity extends AppCompatActivity {
     }
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
-        long remaining = this.goal - stepCount;
+        long remaining = this.goal.getStep() - stepCount;
         remaining_content.setText(String.valueOf(remaining));
     }
 
