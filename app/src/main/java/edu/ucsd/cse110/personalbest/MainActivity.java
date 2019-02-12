@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
-    private Goal goal = new Goal(0);
+    private Goal goal = new Goal(5000);
 
     private SharedPreferences stepData;
     private LocalTime savePrevStepTime;
