@@ -3,6 +3,7 @@ package edu.ucsd.cse110.personalbest;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -39,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
-    private Goal goal = new Goal(5000);
+    private Goal goal = new Goal(0);
 
     private SharedPreferences stepData;
     private LocalTime savePrevStepTime;
@@ -162,6 +163,8 @@ public class MainActivity extends AppCompatActivity {
             estl.setVisibility(View.VISIBLE);
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
+            seb.setTextColor(Color.parseColor("#FF0000"));
+            Toast.makeText(this, "Start Exercising!", Toast.LENGTH_SHORT).show();
         }
         else{
             state=0;
@@ -173,6 +176,7 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
+            seb.setTextColor(Color.parseColor("#000000"));
         }
     }
 
@@ -190,7 +194,14 @@ public class MainActivity extends AppCompatActivity {
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal.getStep() - stepCount;
-        remaining_content.setText(String.valueOf(remaining));
+        if(remaining>0){
+            remaining_content.setText(String.valueOf(remaining));
+        }
+        else if (!remaining_content.getText().toString().equals("DONE!")) {
+            remaining_content.setText("DONE!");
+            Toast.makeText(this, "Congratulation! You have completed today's goal!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void setGoalCount(long goal) {
