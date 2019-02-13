@@ -1,6 +1,8 @@
 package edu.ucsd.cse110.personalbest;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
@@ -196,6 +198,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
         }
     }
+    /*
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal.getStep() - stepCount;
@@ -205,6 +208,44 @@ public class MainActivity extends AppCompatActivity {
         else if (!remaining_content.getText().toString().equals("DONE!")) {
             remaining_content.setText("DONE!");
             Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
+        }
+
+    }*/
+    public void setStepCount(long stepCount) {
+        complete_content.setText(String.valueOf(stepCount));
+        long remaining = this.goal.getStep() - stepCount;
+        if(remaining>0){
+            remaining_content.setText(String.valueOf(remaining));
+        }
+        else if (!remaining_content.getText().toString().equals("DONE!")) {
+            remaining_content.setText("DONE!");
+            Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Set new goal");
+            alertDialog.setMessage("You have completed today's goal! Do you want to set a new goal?");
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(MainActivity.this, "set a new goal", Toast.LENGTH_SHORT).show();
+                    final AlertDialog.Builder newGoalBuilder = new AlertDialog.Builder(MainActivity.this);
+                    newGoalBuilder.setTitle("Setting your daily new goal");
+                    newGoalBuilder.setMessage("How many steps do you intend to walk?");
+                    newGoalBuilder.setPositiveButton("whatever", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    newGoalBuilder.show();
+                }
+            });
+            alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.show();
         }
 
     }
