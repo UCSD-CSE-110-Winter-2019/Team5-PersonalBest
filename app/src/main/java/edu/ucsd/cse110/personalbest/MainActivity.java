@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
+    // Default goal is 5000
     private Goal goal = new Goal(5000);
 
     private SharedPreferences stepData;
@@ -186,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//       If authentication was required during google fit setup, this will be called after the user authenticates
+        // If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
                 fitnessService.updateStepCount();
@@ -210,5 +211,9 @@ public class MainActivity extends AppCompatActivity {
 
     public void setGoalCount(long goal) {
         goal_content.setText(String.valueOf(goal));
+    }
+
+    public int getGoalCount() {
+        return this.goal.getStep();
     }
 }
