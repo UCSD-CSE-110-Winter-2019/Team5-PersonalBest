@@ -98,6 +98,7 @@ public class stepTest {
         assertEquals("5000", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
         assertEquals("DONE!", remaining_content.getText().toString());
+        assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
 
     }
 
@@ -111,6 +112,7 @@ public class stepTest {
         assertEquals("5001", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
         assertEquals("DONE!", remaining_content.getText().toString());
+        assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
     }
 
     private class TestFitnessService implements FitnessService {
