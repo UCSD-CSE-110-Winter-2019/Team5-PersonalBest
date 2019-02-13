@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
         }
         else if (!remaining_content.getText().toString().equals("DONE!")) {
             remaining_content.setText("DONE!");
-            Toast.makeText(this, "Congratulation! You have completed today's goal!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
         }
 
     }
