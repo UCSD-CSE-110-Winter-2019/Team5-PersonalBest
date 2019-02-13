@@ -25,6 +25,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
+    // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
@@ -102,13 +103,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
-        if (fitnessServiceKey == null) {
-            fitnessServiceKey = "GOOGLE_FIT";
+        // When running test, change service key to TEST_SERVICE
+        if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
+            fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         }
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
+
+        // Initial setup for google fit service
         fitnessService.setup();
 
+        // Click on the update button will update steps count
         tmp_update_button = findViewById(R.id.tmp_update_button);
         tmp_update_button.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -66,7 +66,6 @@ public class StepTest {
         btnUpdateSteps = activity.findViewById(R.id.tmp_update_button);
         goal_content = activity.findViewById(R.id.goal_content);
         remaining_content = activity.findViewById(R.id.remaining_content);
-        nextStepCount = 1337;
     }
 
     @Test
@@ -78,10 +77,20 @@ public class StepTest {
 
     @Test
     public void updateTest() {
+        nextStepCount = 1337;
         btnUpdateSteps.performClick();
         assertEquals("1337", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
         assertEquals("3663", remaining_content.getText().toString());
+    }
+
+    @Test
+    public void almost_finish() {
+        nextStepCount = 4999;
+        btnUpdateSteps.performClick();
+        assertEquals("4999", textSteps.getText().toString());
+        assertEquals("5000", goal_content.getText().toString());
+        assertEquals("1", remaining_content.getText().toString());
     }
 
     private class TestFitnessService implements FitnessService {
