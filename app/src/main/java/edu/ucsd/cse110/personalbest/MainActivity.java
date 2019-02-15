@@ -1,6 +1,8 @@
 package edu.ucsd.cse110.personalbest;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
@@ -8,9 +10,11 @@ import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
-    private Goal goal = new Goal(5000);
+    private Goal goal = new Goal(0);
+    private int newGoalStep;
 
     private SharedPreferences stepData;
     private LocalTime savePrevStepTime;
@@ -173,6 +178,40 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
+
+            newGoalStep = -1;
+
+            if( goal.isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
+                //ask if update goal
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Do you want to update your goal? Input your new goal step here:");
+
+                // Set up the input
+                final EditText input = new EditText(this);
+                // Specify the type of input as integer;
+                input.setInputType(InputType.TYPE_CLASS_NUMBER );
+                builder.setView(input);
+
+                // Set up the buttons
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        newGoalStep = Integer.parseInt(input.getText().toString());
+                        if (newGoalStep != -1) {
+                            goal.setStep( newGoalStep );
+                            setGoalCount( goal.getStep() );
+                        }
+                    }
+                });
+                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+                builder.show();
+            }
         }
     }
 
