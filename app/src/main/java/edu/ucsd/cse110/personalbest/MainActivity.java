@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
@@ -28,6 +29,7 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity {
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
+    // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
@@ -43,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
+    // Default goal is 5000
     private Goal goal = new Goal(5000);
     private int newGoalStep;
 
@@ -106,13 +109,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
-        if (fitnessServiceKey == null) {
-            fitnessServiceKey = "GOOGLE_FIT";
+        // When running test, change service key to TEST_SERVICE
+        if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
+            fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
         }
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
+
+        // Initial setup for google fit service
         fitnessService.setup();
 
+        // Click on the update button will update steps count
         tmp_update_button = findViewById(R.id.tmp_update_button);
         tmp_update_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -167,6 +173,8 @@ public class MainActivity extends AppCompatActivity {
             estl.setVisibility(View.VISIBLE);
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
+            seb.setTextColor(Color.parseColor("#FF0000"));
+            Toast.makeText(this, "Start Exercising!", Toast.LENGTH_SHORT).show();
         }
         else{
             state=0;
@@ -178,6 +186,7 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
+            seb.setTextColor(Color.parseColor("#000000"));
 
             newGoalStep = -1;
 
@@ -217,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//       If authentication was required during google fit setup, this will be called after the user authenticates
+        // If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
                 fitnessService.updateStepCount();
@@ -226,13 +235,63 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
         }
     }
+    /*
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal.getStep() - stepCount;
-        remaining_content.setText(String.valueOf(remaining));
+        if(remaining>0){
+            remaining_content.setText(String.valueOf(remaining));
+        }
+        else if (!remaining_content.getText().toString().equals("DONE!")) {
+            remaining_content.setText("DONE!");
+            Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
+        }
+
+    }*/
+    public void setStepCount(long stepCount) {
+        complete_content.setText(String.valueOf(stepCount));
+        long remaining = this.goal.getStep() - stepCount;
+        if(remaining>0){
+            remaining_content.setText(String.valueOf(remaining));
+        }
+        else if (!remaining_content.getText().toString().equals("DONE!")) {
+            remaining_content.setText("DONE!");
+            Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
+            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
+            alertDialog.setTitle("Set new goal");
+            alertDialog.setMessage("You have completed today's goal! Do you want to set a new goal?");
+            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Toast.makeText(MainActivity.this, "set a new goal", Toast.LENGTH_SHORT).show();
+                    final AlertDialog.Builder newGoalBuilder = new AlertDialog.Builder(MainActivity.this);
+                    newGoalBuilder.setTitle("Setting your daily new goal");
+                    newGoalBuilder.setMessage("How many steps do you intend to walk?");
+                    newGoalBuilder.setPositiveButton("whatever", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    newGoalBuilder.show();
+                }
+            });
+            alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            alertDialog.show();
+        }
+
     }
 
     public void setGoalCount(long goal) {
         goal_content.setText(String.valueOf(goal));
+    }
+
+    public int getGoalCount() {
+        return this.goal.getStep();
     }
 }

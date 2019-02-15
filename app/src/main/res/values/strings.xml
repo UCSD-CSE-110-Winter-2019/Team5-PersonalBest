@@ -10,5 +10,5 @@
     <string name="exercise_step_label">Exercise Steps:   </string>
     <string name="exercise_time_label">Exercise Time:   </string>
     <string name="exercise_speed_label">Exercise Speed:   </string>
-    <string name="tmp_update_label">TMP UPDATE</string>
+    <string name="tmp_update_label">UPDATE</string>
 </resources>

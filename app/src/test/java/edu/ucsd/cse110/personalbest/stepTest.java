@@ -40,7 +40,7 @@ import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
-public class StepTest {
+public class stepTest {
     private static final String TEST_SERVICE = "TEST_SERVICE";
 
     private MainActivity activity;
@@ -48,7 +48,9 @@ public class StepTest {
     private TextView goal_content;
     private TextView remaining_content;
     private Button btnUpdateSteps;
+    private Button btnUpdateSteps2;
     private long nextStepCount;
+    private long nextStepCount2;
 
     @Before
     public void setUp() throws Exception {
@@ -67,6 +69,8 @@ public class StepTest {
         goal_content = activity.findViewById(R.id.goal_content);
         remaining_content = activity.findViewById(R.id.remaining_content);
         nextStepCount = 1337;
+
+
     }
 
     @Test
@@ -82,6 +86,33 @@ public class StepTest {
         assertEquals("1337", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
         assertEquals("3663", remaining_content.getText().toString());
+    }
+
+    @Test
+    public void completeTest1(){
+
+        nextStepCount = 5000;
+        goal_content = activity.findViewById(R.id.goal_content);
+        remaining_content = activity.findViewById(R.id.remaining_content);
+        btnUpdateSteps.performClick();
+        assertEquals("5000", textSteps.getText().toString());
+        assertEquals("5000", goal_content.getText().toString());
+        assertEquals("DONE!", remaining_content.getText().toString());
+        assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
+
+    }
+
+    @Test
+    public void completeTest2(){
+
+        nextStepCount = 5001;
+        goal_content = activity.findViewById(R.id.goal_content);
+        remaining_content = activity.findViewById(R.id.remaining_content);
+        btnUpdateSteps.performClick();
+        assertEquals("5001", textSteps.getText().toString());
+        assertEquals("5000", goal_content.getText().toString());
+        assertEquals("DONE!", remaining_content.getText().toString());
+        assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
     }
 
     private class TestFitnessService implements FitnessService {
