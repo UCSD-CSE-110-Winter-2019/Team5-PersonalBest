@@ -45,8 +45,9 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
+    private Button change_goal_button;
     // Default goal is 5000
-    private Goal goal = new Goal(5000);
+    private Goal goal = new Goal(0);
     private int newGoalStep;
 
     private SharedPreferences stepData;
@@ -132,6 +133,13 @@ public class MainActivity extends AppCompatActivity {
         remaining_content = findViewById(R.id.remaining_content);
         this.setGoalCount(this.goal.getStep());
 
+        Button change = findViewById(R.id.goal_update_button);
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptDialog("Set Up New Goal", "Input your new goal here:");
+            }
+        });
 
         if(state==0) {
             etic = findViewById(R.id.exercise_time_content);
@@ -188,38 +196,10 @@ public class MainActivity extends AppCompatActivity {
             seb.setText("Start");
             seb.setTextColor(Color.parseColor("#000000"));
 
-            newGoalStep = -1;
+
 
             if( goal.isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
-                //ask if update goal
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Do you want to update your goal? Input your new goal step here:");
-
-                // Set up the input
-                final EditText input = new EditText(this);
-                // Specify the type of input as integer;
-                input.setInputType(InputType.TYPE_CLASS_NUMBER );
-                builder.setView(input);
-
-                // Set up the buttons
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        newGoalStep = Integer.parseInt(input.getText().toString());
-                        if (newGoalStep != -1) {
-                            goal.setStep( newGoalStep );
-                            setGoalCount( goal.getStep() );
-                        }
-                    }
-                });
-                builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                });
-
-                builder.show();
+                promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
             }
         }
     }
@@ -235,19 +215,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
         }
     }
-    /*
-    public void setStepCount(long stepCount) {
-        complete_content.setText(String.valueOf(stepCount));
-        long remaining = this.goal.getStep() - stepCount;
-        if(remaining>0){
-            remaining_content.setText(String.valueOf(remaining));
-        }
-        else if (!remaining_content.getText().toString().equals("DONE!")) {
-            remaining_content.setText("DONE!");
-            Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
-        }
 
-    }*/
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal.getStep() - stepCount;
@@ -257,32 +225,6 @@ public class MainActivity extends AppCompatActivity {
         else if (!remaining_content.getText().toString().equals("DONE!")) {
             remaining_content.setText("DONE!");
             Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
-            final AlertDialog.Builder alertDialog = new AlertDialog.Builder(MainActivity.this);
-            alertDialog.setTitle("Set new goal");
-            alertDialog.setMessage("You have completed today's goal! Do you want to set a new goal?");
-            alertDialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Toast.makeText(MainActivity.this, "set a new goal", Toast.LENGTH_SHORT).show();
-                    final AlertDialog.Builder newGoalBuilder = new AlertDialog.Builder(MainActivity.this);
-                    newGoalBuilder.setTitle("Setting your daily new goal");
-                    newGoalBuilder.setMessage("How many steps do you intend to walk?");
-                    newGoalBuilder.setPositiveButton("whatever", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    newGoalBuilder.show();
-                }
-            });
-            alertDialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            alertDialog.show();
         }
 
     }
@@ -293,5 +235,47 @@ public class MainActivity extends AppCompatActivity {
 
     public int getGoalCount() {
         return this.goal.getStep();
+    }
+
+    private void promptDialog ( String title, String message ) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+
+        newGoalStep = -1;
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input as integer;
+        input.setInputType(InputType.TYPE_CLASS_NUMBER );
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                newGoalStep = Integer.parseInt(input.getText().toString());
+                if (newGoalStep != -1) {
+                    goal.setStep(newGoalStep);
+                    setGoalCount(goal.getStep());
+                    int complete = Integer.parseInt(complete_content.getText().toString());
+                    int remaining = newGoalStep - complete;
+                    if (remaining <= 0) {
+                        remaining_content.setText("DONE!");
+                    } else {
+                        remaining_content.setText(String.valueOf(remaining));
+                    }
+
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }
