@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private Button tmp_update_button;
     private Button change_goal_button;
     // Default goal is 5000
-    private Goal goal = new Goal(0);
+    private Goal goal = new Goal(5000);
     private int newGoalStep;
 
     private SharedPreferences stepData;
