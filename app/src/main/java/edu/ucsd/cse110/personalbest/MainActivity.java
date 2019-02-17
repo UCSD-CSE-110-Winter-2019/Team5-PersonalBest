@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private LocalTime savePrevStepTime;
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
+    public int[] weekGoals = new int[7];
     IntentionalStep walk;
 
     private class walkUpdateTask extends AsyncTask<String,String,String>{
@@ -240,6 +241,10 @@ public class MainActivity extends AppCompatActivity {
         Intent intent=new Intent(this,BarActivity.class);
         intent.putExtra("weekWalks",weekWalks);
         intent.putExtra("weekSteps",weekSteps);
+        for(int i=0;i<7;i++){
+            if(weekGoals[i]==0) weekGoals[i]=i==0?5000:weekGoals[i-1];
+        }
+        intent.putExtra("weekGoals",weekGoals);
         startActivity(intent);
     }
     public void setBarChart(){
@@ -261,15 +266,25 @@ public class MainActivity extends AppCompatActivity {
         weekWalks=new int[7];
         while(it.hasNext()){
             Map.Entry pair=(Map.Entry)it.next();
-            System.out.println(pair);
-            long locator=Long.parseLong(pair.getKey().toString())*1000-startTime;
-            System.out.println(locator);
-            if(locator<0){
-                editor.remove(pair.getKey().toString());
+            if(pair.getKey().toString().substring(0,4).equals("goal")){
+                long locator = Long.parseLong(pair.getKey().toString().substring(4)) - startTime;
+                if (locator < 0) {
+                    editor.remove(pair.getKey().toString());
+                } else {
+                    int day = (int) (locator / MS_IN_DAY);
+                    int newSave = Integer.parseInt(pair.getValue().toString());
+                    weekGoals[day] += Math.max(weekGoals[day],newSave);
+                }
             }
-            else{
-                int day=(int)(locator/MS_IN_DAY);
-                weekWalks[day]+=Integer.parseInt(pair.getValue().toString());
+            else {
+                long locator = Long.parseLong(pair.getKey().toString()) * 1000 - startTime;
+                System.out.println(locator);
+                if (locator < 0) {
+                    editor.remove(pair.getKey().toString());
+                } else {
+                    int day = (int) (locator / MS_IN_DAY);
+                    weekWalks[day] += Integer.parseInt(pair.getValue().toString());
+                }
             }
         }
     }
@@ -303,6 +318,12 @@ public class MainActivity extends AppCompatActivity {
                 if (newGoalStep != -1) {
                     goal.setStep(newGoalStep);
                     setGoalCount(goal.getStep());
+                    SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
+                    SharedPreferences.Editor editor=sharedPreferences.edit();
+                    Date now=new Date();
+                    Calendar calendar=Calendar.getInstance();
+                    calendar.setTime(now);
+                    editor.putInt("goal"+calendar.getTimeInMillis(),goal.getStep());
                     int complete = Integer.parseInt(complete_content.getText().toString());
                     int remaining = newGoalStep - complete;
                     if (remaining <= 0) {

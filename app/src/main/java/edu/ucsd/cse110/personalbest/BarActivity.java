@@ -27,6 +27,7 @@ public class BarActivity extends AppCompatActivity {
         GraphView graph = (GraphView) findViewById(R.id.graph);
         int[] weekWalks=getIntent().getIntArrayExtra("weekWalks");
         int[] weekSteps=getIntent().getIntArrayExtra("weekSteps");
+        int[] weekGoals=getIntent().getIntArrayExtra("weekGoals");
         android.icu.util.Calendar cal = android.icu.util.Calendar.getInstance();
         Date now = cal.getTime();
         Date[] timestamp=new Date[7];
@@ -54,13 +55,13 @@ public class BarActivity extends AppCompatActivity {
                 new DataPoint(timestamp[6], weekWalks[6]),
         });
         LineGraphSeries<DataPoint> series3 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(timestamp[0], 5000),
-                new DataPoint(timestamp[1], 5000),
-                new DataPoint(timestamp[2], 5500),
-                new DataPoint(timestamp[3], 6500),
-                new DataPoint(timestamp[4], 6500),
-                new DataPoint(timestamp[5], 7000),
-                new DataPoint(timestamp[6], 7000),
+                new DataPoint(timestamp[0], weekGoals[0]),
+                new DataPoint(timestamp[1], weekGoals[1]),
+                new DataPoint(timestamp[2], weekGoals[2]),
+                new DataPoint(timestamp[3], weekGoals[3]),
+                new DataPoint(timestamp[4], weekGoals[4]),
+                new DataPoint(timestamp[5], weekGoals[5]),
+                new DataPoint(timestamp[6], weekGoals[6]),
         });
         series2.setColor(Color.RED);
         series3.setColor(Color.BLACK);
