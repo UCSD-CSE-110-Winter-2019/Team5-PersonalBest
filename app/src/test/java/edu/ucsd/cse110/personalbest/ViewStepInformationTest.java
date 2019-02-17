@@ -181,5 +181,10 @@ public class ViewStepInformationTest {
             System.out.println(TAG + "updateStepCount");
             mainActivity.setStepCount(nextStepCount);
         }
+
+        @Override
+        public void getStepHistory(){
+
+        }
     }
 }
