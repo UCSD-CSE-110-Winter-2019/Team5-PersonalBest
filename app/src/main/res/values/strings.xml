@@ -13,4 +13,5 @@
     <string name="tmp_update_label">Update Data</string>
     <string name="history_label">Run history</string>
     <string name="go_back_button">Go back</string>
+    <string name="change_goal_button">CHANGE GOAL</string>
 </resources>
