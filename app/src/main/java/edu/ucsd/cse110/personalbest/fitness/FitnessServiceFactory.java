@@ -7,6 +7,7 @@ import java.util.Map;
 
 import edu.ucsd.cse110.personalbest.MainActivity;
 
+// Code adapted from lab4-google-fit-master
 public class FitnessServiceFactory {
 
     private static final String TAG = "[FitnessServiceFactory]";

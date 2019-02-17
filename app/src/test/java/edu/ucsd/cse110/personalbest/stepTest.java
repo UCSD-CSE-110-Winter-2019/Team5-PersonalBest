@@ -9,6 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import junit.framework.Assert;
 
+import org.apache.tools.ant.Main;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,7 +40,7 @@ import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(RobolectricTestRunner.class)
-public class StepTest {
+public class stepTest {
     private static final String TEST_SERVICE = "TEST_SERVICE";
 
     private MainActivity activity;
@@ -47,7 +48,9 @@ public class StepTest {
     private TextView goal_content;
     private TextView remaining_content;
     private Button btnUpdateSteps;
+    private Button btnUpdateSteps2;
     private long nextStepCount;
+    private long nextStepCount2;
 
     @Before
     public void setUp() throws Exception {
@@ -57,14 +60,17 @@ public class StepTest {
                 return new TestFitnessService(mainActivity);
             }
         });
-        activity = Robolectric.buildActivity(MainActivity.class).create().get();
-
+        Intent intent = new Intent(RuntimeEnvironment.application, MainActivity.class);
+        intent.putExtra(MainActivity.FITNESS_SERVICE_KEY, TEST_SERVICE);
+        activity = Robolectric.buildActivity(MainActivity.class, intent).create().get();
 
         textSteps = activity.findViewById(R.id.complete_content);
         btnUpdateSteps = activity.findViewById(R.id.tmp_update_button);
         goal_content = activity.findViewById(R.id.goal_content);
         remaining_content = activity.findViewById(R.id.remaining_content);
         nextStepCount = 1337;
+
+
     }
 
     @Test
@@ -77,9 +83,36 @@ public class StepTest {
     @Test
     public void updateTest() {
         btnUpdateSteps.performClick();
-        assertEquals("", textSteps.getText().toString());
+        assertEquals("1337", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
-        assertEquals("", remaining_content.getText().toString());
+        assertEquals("3663", remaining_content.getText().toString());
+    }
+
+    @Test
+    public void completeTest1(){
+
+        nextStepCount = 5000;
+        goal_content = activity.findViewById(R.id.goal_content);
+        remaining_content = activity.findViewById(R.id.remaining_content);
+        btnUpdateSteps.performClick();
+        assertEquals("5000", textSteps.getText().toString());
+        assertEquals("5000", goal_content.getText().toString());
+        assertEquals("DONE!", remaining_content.getText().toString());
+        assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
+
+    }
+
+    @Test
+    public void completeTest2(){
+
+        nextStepCount = 5001;
+        goal_content = activity.findViewById(R.id.goal_content);
+        remaining_content = activity.findViewById(R.id.remaining_content);
+        btnUpdateSteps.performClick();
+        assertEquals("5001", textSteps.getText().toString());
+        assertEquals("5000", goal_content.getText().toString());
+        assertEquals("DONE!", remaining_content.getText().toString());
+        assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
     }
 
     private class TestFitnessService implements FitnessService {
