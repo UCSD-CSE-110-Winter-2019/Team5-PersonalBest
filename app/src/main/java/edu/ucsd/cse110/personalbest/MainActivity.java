@@ -1,16 +1,21 @@
 package edu.ucsd.cse110.personalbest;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,9 +31,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
     private static final long MS_IN_DAY=86400000;
+    // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
@@ -44,7 +49,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
-    private long goal = 5000;
+    private Button change_goal_button;
+    // Default goal is 5000
+    private Goal goal = new Goal(5000);
+    private int newGoalStep;
 
     private SharedPreferences stepData;
     private LocalTime savePrevStepTime;
@@ -107,9 +115,17 @@ public class MainActivity extends AppCompatActivity {
                 return new GoogleFitAdapter(mainActivity);
             }
         });
+
+        // When running test, change service key to TEST_SERVICE
+        if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
+            fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
+        }
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
+
+        // Initial setup for google fit service
         fitnessService.setup();
 
+        // Click on the update button will update steps count
         tmp_update_button = findViewById(R.id.tmp_update_button);
         tmp_update_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,8 +138,15 @@ public class MainActivity extends AppCompatActivity {
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
         remaining_content = findViewById(R.id.remaining_content);
-        this.setGoalCount(this.goal);
+        this.setGoalCount(this.goal.getStep());
 
+        Button change = findViewById(R.id.goal_update_button);
+        change.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptDialog("Set Up New Goal", "Input your new goal here:");
+            }
+        });
 
         if(state==0) {
             etic = findViewById(R.id.exercise_time_content);
@@ -165,6 +188,8 @@ public class MainActivity extends AppCompatActivity {
             estl.setVisibility(View.VISIBLE);
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
+            seb.setTextColor(Color.parseColor("#FF0000"));
+            Toast.makeText(this, "Start Exercising!", Toast.LENGTH_SHORT).show();
         }
         else{
             state=0;
@@ -176,12 +201,19 @@ public class MainActivity extends AppCompatActivity {
             etil.setVisibility(View.INVISIBLE);
             estl.setVisibility(View.INVISIBLE);
             seb.setText("Start");
+            seb.setTextColor(Color.parseColor("#000000"));
+
+
+
+            if( goal.isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
+                promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
+            }
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//       If authentication was required during google fit setup, this will be called after the user authenticates
+        // If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
                 fitnessService.updateStepCount();
@@ -190,10 +222,18 @@ public class MainActivity extends AppCompatActivity {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
         }
     }
+
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
-        long remaining = this.goal - stepCount;
-        remaining_content.setText(String.valueOf(remaining));
+        long remaining = this.goal.getStep() - stepCount;
+        if(remaining>0){
+            remaining_content.setText(String.valueOf(remaining));
+        }
+        else if (!remaining_content.getText().toString().equals("DONE!")) {
+            remaining_content.setText("DONE!");
+            Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
+        }
+
     }
 
     public void showBarChart(View view){
@@ -236,5 +276,51 @@ public class MainActivity extends AppCompatActivity {
 
     public void setGoalCount(long goal) {
         goal_content.setText(String.valueOf(goal));
+    }
+
+    public int getGoalCount() {
+        return this.goal.getStep();
+    }
+
+    private void promptDialog ( String title, String message ) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title);
+        builder.setMessage(message);
+
+        newGoalStep = -1;
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input as integer;
+        input.setInputType(InputType.TYPE_CLASS_NUMBER );
+        builder.setView(input);
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                newGoalStep = Integer.parseInt(input.getText().toString());
+                if (newGoalStep != -1) {
+                    goal.setStep(newGoalStep);
+                    setGoalCount(goal.getStep());
+                    int complete = Integer.parseInt(complete_content.getText().toString());
+                    int remaining = newGoalStep - complete;
+                    if (remaining <= 0) {
+                        remaining_content.setText("DONE!");
+                    } else {
+                        remaining_content.setText(String.valueOf(remaining));
+                    }
+
+                }
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
     }
 }

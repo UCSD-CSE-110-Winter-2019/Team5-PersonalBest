@@ -14,4 +14,11 @@ public class Goal implements Step {
     public int getStep(){
         return this.goal;
     }
+    public boolean isAchieved( int step ) {
+        if( step >= goal ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }
