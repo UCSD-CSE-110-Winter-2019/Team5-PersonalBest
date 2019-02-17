@@ -21,10 +21,14 @@ import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 
 import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
+    private static final long MS_IN_DAY=86400000;
     private String fitnessServiceKey = "GOOGLE_FIT";
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
@@ -44,7 +48,9 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences stepData;
     private LocalTime savePrevStepTime;
-
+    public int[] weekSteps = new int[7];
+    public int[] weekWalks = new int[7];
+    IntentionalStep walk;
 
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
@@ -52,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         protected String doInBackground(String... strings) {
             int step=1000;
             final long currentTime=Calendar.getInstance().getTimeInMillis()/1000;
-            IntentionalStep walk=new IntentionalStep(currentTime);
+            walk=new IntentionalStep(currentTime);
             final IncidentalStep starting=new IncidentalStep(Integer.parseInt(complete_content.getText().toString()));
             while(state==1){
                 try{
@@ -74,10 +80,20 @@ public class MainActivity extends AppCompatActivity {
         }
 
         protected void onProgressUpdate(String... text){
-
             estc.setText(text[0]+" steps");
             etic.setText(text[1]+" seconds");
             espc.setText(text[2]+" km/h");
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
+            SharedPreferences.Editor editor=sharedPreferences.edit();
+            editor.putInt(""+walk.getTimeStart(),100);
+                    //walk.getStep());
+            editor.commit();
+            System.out.println(""+walk.getTimeStart()+" "+walk.getStep());
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.O)
@@ -85,16 +101,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        stepData = getSharedPreferences("StepData", MODE_PRIVATE);
-        stepData.edit().putInt("first", 0)
-                        .putInt("second", 0)
-                        .putInt("third", 0)
-                        .putInt("fourth",0)
-                        .putInt("fifth", 0)
-                        .putInt("sixth", 0)
-                        .putInt("seventh", 0).commit();
-        savePrevStepTime = LocalTime.parse("23:59:59");
         FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
             @Override
             public FitnessService create(MainActivity mainActivity) {
@@ -109,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fitnessService.updateStepCount();
+                setBarChart();
             }
         });
 
@@ -187,6 +194,44 @@ public class MainActivity extends AppCompatActivity {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal - stepCount;
         remaining_content.setText(String.valueOf(remaining));
+    }
+
+    public void showBarChart(View view){
+        Intent intent=new Intent(this,BarActivity.class);
+        intent.putExtra("weekWalks",weekWalks);
+        intent.putExtra("weekSteps",weekSteps);
+        startActivity(intent);
+    }
+    public void setBarChart(){
+        fitnessService.getStepHistory();
+        android.icu.util.Calendar cal = android.icu.util.Calendar.getInstance();
+        Date now = new Date();
+        cal.setTime(now);
+        cal.set(android.icu.util.Calendar.HOUR_OF_DAY,23);
+        cal.set(android.icu.util.Calendar.MINUTE,59);
+        cal.set(android.icu.util.Calendar.SECOND,59);
+        cal.set(android.icu.util.Calendar.MILLISECOND,999);
+        long endTime = cal.getTimeInMillis();
+        cal.add(android.icu.util.Calendar.WEEK_OF_YEAR, -1);
+        long startTime = cal.getTimeInMillis();
+        SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
+        SharedPreferences.Editor editor=sharedPreferences.edit();
+        Map<String,?> map=sharedPreferences.getAll();
+        Iterator it=map.entrySet().iterator();
+        weekWalks=new int[7];
+        while(it.hasNext()){
+            Map.Entry pair=(Map.Entry)it.next();
+            System.out.println(pair);
+            long locator=Long.parseLong(pair.getKey().toString())*1000-startTime;
+            System.out.println(locator);
+            if(locator<0){
+                editor.remove(pair.getKey().toString());
+            }
+            else{
+                int day=(int)(locator/MS_IN_DAY);
+                weekWalks[day]+=Integer.parseInt(pair.getValue().toString());
+            }
+        }
     }
 
     public void setGoalCount(long goal) {

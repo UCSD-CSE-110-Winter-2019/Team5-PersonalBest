@@ -151,7 +151,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/tmp_update_label"
-        android:layout_marginTop="30sp"
+        app:layout_constraintHorizontal_bias="0.503"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/exercise_speed_content" />
+
+    <Button
+        android:id="@+id/tmp_update_button2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:layout_marginRight="39dp"
+        android:onClick="showBarChart"
+        android:text="@string/history_label"
+        app:layout_constraintHorizontal_bias="0.583"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/exercise_speed_content" />
