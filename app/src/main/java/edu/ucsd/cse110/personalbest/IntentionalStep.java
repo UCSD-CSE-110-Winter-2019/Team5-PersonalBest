@@ -35,6 +35,7 @@ public class IntentionalStep implements Step {
     public long getTimeElapsed(){
         return this.timeCurrent-this.timeStart;
     }
+    public long getTimeStart(){ return this.timeStart;}
     public long getSpeed(){
         return this.step/this.timeElapsed;
     }
