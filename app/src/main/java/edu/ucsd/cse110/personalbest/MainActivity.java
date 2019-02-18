@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
+    private Button mock_step_button;
+    private Boolean demo  = false;
     private Button change_goal_button;
     // Default goal is 5000
     private Goal goal = new Goal(5000);
@@ -78,9 +80,15 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     Thread.sleep(step);
                     String[] publishable=new String[3];
+                  
+                    if (!demo) {
+                        fitnessService.updateStepCount();
+                    }
+
                     fitnessService.updateStepCount();
 
                     // set the steps and time
+
                     walk.setStep(Integer.parseInt(complete_content.getText().toString())-starting.getStep());
                     walk.setTime(Calendar.getInstance().getTimeInMillis()/1000);
 
@@ -148,6 +156,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mock_step_button = findViewById(R.id.mock_step);
+        mock_step_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                demo = true;
+                int cur_step = Integer.parseInt(complete_content.getText().toString());
+                setStepCount(cur_step + 500);
+                setBarChart();
+            }
+        });
 
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
