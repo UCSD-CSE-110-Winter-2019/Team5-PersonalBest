@@ -192,4 +192,20 @@
         app:layout_constraintLeft_toLeftOf="@id/start_button"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/remaining_content" />
+
+    <Button
+        android:id="@+id/mock_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="39dp"
+        android:layout_marginEnd="21dp"
+        android:layout_marginBottom="1dp"
+        android:onClick="mockTime"
+        android:text="+5min"
+        app:layout_constraintBottom_toTopOf="@+id/exercise_label"
+        app:layout_constraintEnd_toStartOf="@+id/start_button"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/start_button" />
+
 </android.support.constraint.ConstraintLayout>
