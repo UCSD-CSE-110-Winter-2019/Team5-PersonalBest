@@ -122,7 +122,6 @@ public class GoogleFitAdapter implements FitnessService {
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     public void getStepHistory(){
-        /* 不確定用不用得到 */
         GoogleSignInAccount lastSignedInAccount = GoogleSignIn.getLastSignedInAccount(activity);
         if (lastSignedInAccount == null) {
             return;
