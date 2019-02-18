@@ -85,10 +85,7 @@ public class MainActivity extends AppCompatActivity {
                         fitnessService.updateStepCount();
                     }
 
-                    fitnessService.updateStepCount();
-
                     // set the steps and time
-
                     walk.setStep(Integer.parseInt(complete_content.getText().toString())-starting.getStep());
                     walk.setTime(Calendar.getInstance().getTimeInMillis()/1000);
 
@@ -151,6 +148,7 @@ public class MainActivity extends AppCompatActivity {
         tmp_update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                demo = false;
                 fitnessService.updateStepCount();
                 setBarChart();
             }
