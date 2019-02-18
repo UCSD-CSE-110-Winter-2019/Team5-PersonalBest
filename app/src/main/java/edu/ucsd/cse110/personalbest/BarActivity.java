@@ -25,17 +25,25 @@ public class BarActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bar);
         GraphView graph = (GraphView) findViewById(R.id.graph);
+
+        // get weekly stats
         int[] weekWalks=getIntent().getIntArrayExtra("weekWalks");
         int[] weekSteps=getIntent().getIntArrayExtra("weekSteps");
         int[] weekGoals=getIntent().getIntArrayExtra("weekGoals");
+
+        // set up new cal, date and time
         android.icu.util.Calendar cal = android.icu.util.Calendar.getInstance();
         Date now = cal.getTime();
         Date[] timestamp=new Date[7];
         timestamp[6]=now;
+
+        // add date to cal
         for (int i=1;i<7;i++){
             cal.add(Calendar.DATE,-1);
             timestamp[6-i]=cal.getTime();
         }
+
+        // pre-set slots for weekly walks
         BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
                 new DataPoint(timestamp[0], weekSteps[0]),
                 new DataPoint(timestamp[1], weekSteps[1]),
@@ -45,6 +53,8 @@ public class BarActivity extends AppCompatActivity {
                 new DataPoint(timestamp[5], weekSteps[5]),
                 new DataPoint(timestamp[6], weekSteps[6]),
         });
+
+        // pre-set slots for weekly steps
         BarGraphSeries<DataPoint> series2 = new BarGraphSeries<>(new DataPoint[] {
                 new DataPoint(timestamp[0], weekWalks[0]),
                 new DataPoint(timestamp[1], weekWalks[1]),
@@ -54,6 +64,8 @@ public class BarActivity extends AppCompatActivity {
                 new DataPoint(timestamp[5], weekWalks[5]),
                 new DataPoint(timestamp[6], weekWalks[6]),
         });
+
+        // pre-set for weekly goals
         LineGraphSeries<DataPoint> series3 = new LineGraphSeries<>(new DataPoint[] {
                 new DataPoint(timestamp[0], weekGoals[0]),
                 new DataPoint(timestamp[1], weekGoals[1]),
@@ -63,8 +75,12 @@ public class BarActivity extends AppCompatActivity {
                 new DataPoint(timestamp[5], weekGoals[5]),
                 new DataPoint(timestamp[6], weekGoals[6]),
         });
+
+        // set different color for weekly steps and goals to display on the bar chart
         series2.setColor(Color.RED);
         series3.setColor(Color.BLACK);
+
+        // add these series to the graph to be shown
         graph.addSeries(series);
         graph.addSeries(series2);
         graph.addSeries(series3);
@@ -78,6 +94,8 @@ public class BarActivity extends AppCompatActivity {
         graph.getViewport().setMaxX(max.getTime().getTime());
         graph.getViewport().setXAxisBoundsManual(true);
         graph.getGridLabelRenderer().setHumanRounding(false,true);
+
+        // set titles for bar chart
         series.setTitle("Total Steps");
         series2.setTitle("Exercise Steps");
         series3.setTitle("Goal");
@@ -85,6 +103,7 @@ public class BarActivity extends AppCompatActivity {
         graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
+    // function to go back to mainActivity
     public void goBack(View view){
         finish();
     }

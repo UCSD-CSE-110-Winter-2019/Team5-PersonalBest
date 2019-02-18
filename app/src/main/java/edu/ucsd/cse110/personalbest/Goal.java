@@ -1,5 +1,6 @@
 package edu.ucsd.cse110.personalbest;
 
+/* Goal class */
 public class Goal implements Step {
     private int goal;
     Goal(){

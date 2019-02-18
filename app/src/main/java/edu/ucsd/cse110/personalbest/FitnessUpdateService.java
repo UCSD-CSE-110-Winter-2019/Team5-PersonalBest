@@ -10,6 +10,8 @@ import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
 import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 
 public class FitnessUpdateService extends Service {
+
+    //fitness update service constructor
     private final IBinder iBinder=new FitnessBinder();
     private FitnessUpdateServiceDelegate fitnessUpdateServiceDelegate;
 

@@ -63,23 +63,36 @@ public class MainActivity extends AppCompatActivity {
     public int[] weekGoals = new int[7];
     IntentionalStep walk;
 
+    /* keep track of stats when the app is running in background */
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
         @Override
         protected String doInBackground(String... strings) {
             int step=1000;
             final long currentTime=Calendar.getInstance().getTimeInMillis()/1000;
+
+            // create new intentional walk object
             walk=new IntentionalStep(currentTime);
             final IncidentalStep starting=new IncidentalStep(Integer.parseInt(complete_content.getText().toString()));
+
+            // while walking
             while(state==1){
                 try{
                     Thread.sleep(step);
                     String[] publishable=new String[3];
+                  
                     if (!demo) {
                         fitnessService.updateStepCount();
                     }
+
+                    fitnessService.updateStepCount();
+
+                    // set the steps and time
+
                     walk.setStep(Integer.parseInt(complete_content.getText().toString())-starting.getStep());
                     walk.setTime(Calendar.getInstance().getTimeInMillis()/1000);
+
+                    // allocate stats into corresponding slot
                     publishable[0]=""+walk.getStep();
                     publishable[1]=""+walk.getTimeElapsed();
                     publishable[2]=""+walk.getSpeed();
@@ -92,23 +105,26 @@ public class MainActivity extends AppCompatActivity {
             return "Congratulations! You walked "+walk.getStep()+" steps during this workout.";
         }
 
+        /* Keep track of stats when in intentional walk */
         protected void onProgressUpdate(String... text){
             estc.setText(text[0]+" steps");
             etic.setText(text[1]+" seconds");
             espc.setText(text[2]+" km/h");
         }
 
+        /* save the user stats using sharedPreferences */
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
             SharedPreferences.Editor editor=sharedPreferences.edit();
             editor.putInt(""+walk.getTimeStart(),100);
-                    //walk.getStep());
             editor.commit();
             System.out.println(""+walk.getTimeStart()+" "+walk.getStep());
         }
     }
+
+    // using google fit api
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,11 +167,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
         remaining_content = findViewById(R.id.remaining_content);
         this.setGoalCount(this.goal.getStep());
 
+        // manually chang the goal
         Button change = findViewById(R.id.goal_update_button);
         change.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -164,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // when not in intentional walk mode
         if(state==0) {
             etic = findViewById(R.id.exercise_time_content);
             espc = findViewById(R.id.exercise_speed_content);
@@ -190,8 +209,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /* function to handle situation when switching between intentional walk and normal walk */
     private void switchState(View v){
         Button seb=findViewById(R.id.start_button);
+
+        // when in normal walk
         if(state==0){
             state=1;
             seb.setText("End");
@@ -207,6 +229,8 @@ public class MainActivity extends AppCompatActivity {
             seb.setTextColor(Color.parseColor("#FF0000"));
             Toast.makeText(this, "Start Exercising!", Toast.LENGTH_SHORT).show();
         }
+
+        // when in intentional walk
         else{
             state=0;
             etic.setVisibility(View.INVISIBLE);
@@ -219,14 +243,14 @@ public class MainActivity extends AppCompatActivity {
             seb.setText("Start");
             seb.setTextColor(Color.parseColor("#000000"));
 
-
-
+            // prompt user to change goal when goal is achieved
             if( goal.isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
                 promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
             }
         }
     }
 
+    /* check authentication during google fit setup */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // If authentication was required during google fit setup, this will be called after the user authenticates
@@ -239,19 +263,22 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /* set the step count */
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal.getStep() - stepCount;
         if(remaining>0){
             remaining_content.setText(String.valueOf(remaining));
         }
+
+        // show "DONE!" when the goal is achieved and make a toast message to remind the user
         else if (!remaining_content.getText().toString().equals("DONE!")) {
             remaining_content.setText("DONE!");
             Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
         }
-
     }
 
+    /* function to show the bar chart recording user's past week's work out */
     public void showBarChart(View view){
         Intent intent=new Intent(this,BarActivity.class);
         intent.putExtra("weekWalks",weekWalks);
@@ -262,8 +289,12 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("weekGoals",weekGoals);
         startActivity(intent);
     }
+
+    /* function to set up the bar chart */
     public void setBarChart(){
         fitnessService.getStepHistory();
+
+        // create a cal object and set its attributes
         android.icu.util.Calendar cal = android.icu.util.Calendar.getInstance();
         Date now = new Date();
         cal.setTime(now);
@@ -274,9 +305,13 @@ public class MainActivity extends AppCompatActivity {
         long endTime = cal.getTimeInMillis();
         cal.add(android.icu.util.Calendar.WEEK_OF_YEAR, -1);
         long startTime = cal.getTimeInMillis();
+
+        // get information from sharedPreferences
         SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
         SharedPreferences.Editor editor=sharedPreferences.edit();
         Map<String,?> map=sharedPreferences.getAll();
+
+        // using iterator to save the past 7 days' information
         Iterator it=map.entrySet().iterator();
         weekWalks=new int[7];
         while(it.hasNext()){
@@ -304,14 +339,17 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /* setter of the goal count */
     public void setGoalCount(long goal) {
         goal_content.setText(String.valueOf(goal));
     }
 
+    /* getter of the goal count */
     public int getGoalCount() {
         return this.goal.getStep();
     }
 
+    /* function to show the dialog to prompt user to enter new goal */
     private void promptDialog ( String title, String message ) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title);
@@ -325,7 +363,7 @@ public class MainActivity extends AppCompatActivity {
         input.setInputType(InputType.TYPE_CLASS_NUMBER );
         builder.setView(input);
 
-        // Set up the buttons
+        // Set up the positive button ("Yes" button)
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -350,6 +388,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // set the negative button ("No" button)
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -357,6 +397,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // show the dialog
         builder.show();
     }
 }

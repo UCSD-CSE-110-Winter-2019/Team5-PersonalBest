@@ -22,6 +22,8 @@ public class IntentionalStep implements Step {
         this.timeCurrent=0; //Don't care
         this.timeElapsed=timeElapsed;
     }
+
+    //functions under the content of intentional step class
     public void setStep(int step) {
         this.step = step;
     }
