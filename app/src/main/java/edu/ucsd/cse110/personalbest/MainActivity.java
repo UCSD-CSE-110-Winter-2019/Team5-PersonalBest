@@ -410,12 +410,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        fitnessService.updateStepCount();
+        if (!demo) {
+            fitnessService.updateStepCount();
+        }
         setBarChart();
     }
 
     //Mock time onclick method
     public void mockTime(View view){
+        demo = true;
         timeModifier+=5*60*1000;
     }
 }
