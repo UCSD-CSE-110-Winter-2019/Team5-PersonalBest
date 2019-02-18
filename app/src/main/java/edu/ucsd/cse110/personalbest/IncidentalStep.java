@@ -1,5 +1,6 @@
 package edu.ucsd.cse110.personalbest;
 
+/* incidental step class */
 public class IncidentalStep implements Step {
     private int step;
     IncidentalStep(){
