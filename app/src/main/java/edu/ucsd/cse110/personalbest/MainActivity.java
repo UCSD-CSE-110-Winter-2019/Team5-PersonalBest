@@ -38,26 +38,24 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
     private static int state=0; //0 for standby, 1 for active
-    private TextView etic;
-    private TextView espc;
-    private TextView estc;
+    private TextView etic;//Time Count
+    private TextView espc;//Speed Count
+    private TextView estc;//Step Count
     private TextView exercising;
-    private TextView etil;
-    private TextView espl;
-    private TextView estl;
+    private TextView etil;//Time Label
+    private TextView espl;//Speed Label
+    private TextView estl;//Step Label
     private TextView goal_content;
     private TextView complete_content;
     private TextView remaining_content;
     private Button tmp_update_button;
     private Button mock_step_button;
     private Boolean demo  = false;
-    private Button change_goal_button;
     // Default goal is 5000
     private Goal goal = new Goal(5000);
     private int newGoalStep;
+    private int timeModifier;
 
-    private SharedPreferences stepData;
-    private LocalTime savePrevStepTime;
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
@@ -205,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        timeModifier=0;
     }
 
     /* function to handle situation when switching between intentional walk and normal walk */
@@ -365,7 +365,13 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                newGoalStep = Integer.parseInt(input.getText().toString());
+                try {
+                    newGoalStep = Integer.parseInt(input.getText().toString());
+                }
+                catch (NumberFormatException e){
+                    e.printStackTrace();
+                    return;
+                }
                 if (newGoalStep != -1) {
                     goal.setStep(newGoalStep);
                     setGoalCount(goal.getStep());
@@ -374,7 +380,8 @@ public class MainActivity extends AppCompatActivity {
                     Date now=new Date();
                     Calendar calendar=Calendar.getInstance();
                     calendar.setTime(now);
-                    editor.putInt("goal"+calendar.getTimeInMillis(),goal.getStep());
+                    editor.putInt("goal"+(calendar.getTimeInMillis()+timeModifier),goal.getStep());
+                    editor.commit();
                     int complete = Integer.parseInt(complete_content.getText().toString());
                     int remaining = newGoalStep - complete;
                     if (remaining <= 0) {
@@ -397,5 +404,18 @@ public class MainActivity extends AppCompatActivity {
 
         // show the dialog
         builder.show();
+    }
+
+    //Auto update on Resume
+    @Override
+    public void onResume() {
+        super.onResume();
+        fitnessService.updateStepCount();
+        setBarChart();
+    }
+
+    //Mock time onclick method
+    public void mockTime(View view){
+        timeModifier+=5*60*1000;
     }
 }
