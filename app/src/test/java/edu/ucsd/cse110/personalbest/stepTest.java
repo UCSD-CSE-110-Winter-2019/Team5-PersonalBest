@@ -115,6 +115,26 @@ public class stepTest {
         assertEquals("Congratulations! You have completed today's goal!", ShadowToast.getTextOfLatestToast());
     }
 
+    @Test
+    public void setGoal(){
+        activity.setGoalCount(6000);
+        goal_content = activity.findViewById(R.id.goal_content);
+        btnUpdateSteps.performClick();
+        assertEquals("6000", goal_content.getText().toString());
+    }
+
+    @Test
+    public void updateGoal(){
+        activity.setGoalCount(5000);
+        goal_content = activity.findViewById(R.id.goal_content);
+        btnUpdateSteps.performClick();
+        assertEquals("5000", goal_content.getText().toString());
+        activity.setGoalCount(6000);
+        goal_content = activity.findViewById(R.id.goal_content);
+        btnUpdateSteps.performClick();
+        assertEquals("6000", goal_content.getText().toString());
+    }
+
     private class TestFitnessService implements FitnessService {
         private static final String TAG = "[TestFitnessService]: ";
         private MainActivity mainActivity;
