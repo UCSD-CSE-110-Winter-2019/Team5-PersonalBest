@@ -49,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
     private TextView exercise_step_content;
     private TextView exercise_time_content;
     private TextView exercise_speed_content;
-    
-    private Button tmp_update_button;
+
+    private Button update_button;
     private Button mock_step_button;
     private Boolean demo  = false;
     // Default goal is 5000
@@ -61,19 +61,19 @@ public class MainActivity extends AppCompatActivity {
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
-    IntentionalStep walk;
+    IntentionalWalk walk;
 
     /* keep track of stats when the app is running in background */
     private class walkUpdateTask extends AsyncTask<String,String,String>{
 
         @Override
         protected String doInBackground(String... strings) {
-            int step=1000;
-            final long currentTime=Calendar.getInstance().getTimeInMillis()/1000;
+            int step = 1000;
+            final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
 
             // create new intentional walk object
-            walk=new IntentionalStep(currentTime);
-            final IncidentalStep starting=new IncidentalStep(Integer.parseInt(complete_content.getText().toString()));
+            walk=new IntentionalWalk(currentTime);
+            final IncidentalWalk starting=new IncidentalWalk(Integer.parseInt(complete_content.getText().toString()));
 
             // while walking
             while(state==1){
@@ -144,8 +144,8 @@ public class MainActivity extends AppCompatActivity {
         fitnessService.setup();
 
         // Click on the update button will update steps count
-        tmp_update_button = findViewById(R.id.tmp_update_button);
-        tmp_update_button.setOnClickListener(new View.OnClickListener() {
+        update_button = findViewById(R.id.tmp_update_button);
+        update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 demo = false;
