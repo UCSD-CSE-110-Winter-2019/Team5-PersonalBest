@@ -24,30 +24,32 @@ import edu.ucsd.cse110.personalbest.fitness.FitnessService;
 import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
 import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 
-import java.time.LocalTime;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
-    private static final long MS_IN_DAY=86400000;
+    private static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
+    private static final String TAG = "StepCountActivity";
+    private static final long MS_IN_DAY = 86400000;
     // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
-    private static final String TAG = "StepCountActivity";
     private FitnessService fitnessService;
-    private static int state=0; //0 for standby, 1 for active
-    private TextView etic;//Time Count
-    private TextView espc;//Speed Count
-    private TextView estc;//Step Count
-    private TextView exercising;
-    private TextView etil;//Time Label
-    private TextView espl;//Speed Label
-    private TextView estl;//Step Label
+    // 0 for standby, 1 for active
+    private static int state = 0;
+
+    private TextView exercise_label;
+    private TextView exercise_step_label;
+    private TextView exercise_time_label;
+    private TextView exercise_speed_label;
     private TextView goal_content;
     private TextView complete_content;
     private TextView remaining_content;
+    private TextView exercise_step_content;
+    private TextView exercise_time_content;
+    private TextView exercise_speed_content;
+    
     private Button tmp_update_button;
     private Button mock_step_button;
     private Boolean demo  = false;
@@ -102,9 +104,9 @@ public class MainActivity extends AppCompatActivity {
 
         /* Keep track of stats when in intentional walk */
         protected void onProgressUpdate(String... text){
-            estc.setText(text[0]+" steps");
-            etic.setText(text[1]+" seconds");
-            espc.setText(text[2]+" km/h");
+            exercise_step_content.setText(text[0]+" steps");
+            exercise_time_content.setText(text[1]+" seconds");
+            exercise_speed_content.setText(text[2]+" km/h");
         }
 
         /* save the user stats using sharedPreferences */
@@ -180,20 +182,20 @@ public class MainActivity extends AppCompatActivity {
 
         // when not in intentional walk mode
         if(state==0) {
-            etic = findViewById(R.id.exercise_time_content);
-            espc = findViewById(R.id.exercise_speed_content);
-            estc = findViewById(R.id.exercise_step_content);
-            exercising = findViewById(R.id.exercise_label);
-            etil = findViewById(R.id.exercise_time_label);
-            espl = findViewById(R.id.exercise_speed_label);
-            estl = findViewById(R.id.exercise_step_label);
-            etic.setVisibility(View.INVISIBLE);
-            espc.setVisibility(View.INVISIBLE);
-            estc.setVisibility(View.INVISIBLE);
-            exercising.setVisibility(View.INVISIBLE);
-            espl.setVisibility(View.INVISIBLE);
-            etil.setVisibility(View.INVISIBLE);
-            estl.setVisibility(View.INVISIBLE);
+            exercise_time_content = findViewById(R.id.exercise_time_content);
+            exercise_speed_content = findViewById(R.id.exercise_speed_content);
+            exercise_step_content = findViewById(R.id.exercise_step_content);
+            exercise_label = findViewById(R.id.exercise_label);
+            exercise_time_label = findViewById(R.id.exercise_time_label);
+            exercise_speed_label = findViewById(R.id.exercise_speed_label);
+            exercise_step_label = findViewById(R.id.exercise_step_label);
+            exercise_time_content.setVisibility(View.INVISIBLE);
+            exercise_speed_content.setVisibility(View.INVISIBLE);
+            exercise_step_content.setVisibility(View.INVISIBLE);
+            exercise_label.setVisibility(View.INVISIBLE);
+            exercise_speed_label.setVisibility(View.INVISIBLE);
+            exercise_time_label.setVisibility(View.INVISIBLE);
+            exercise_step_label.setVisibility(View.INVISIBLE);
         }
         Button seb=findViewById(R.id.start_button);
         seb.setOnClickListener(new View.OnClickListener() {
@@ -215,13 +217,13 @@ public class MainActivity extends AppCompatActivity {
         if(state==0){
             state=1;
             seb.setText("End");
-            etic.setVisibility(View.VISIBLE);
-            espc.setVisibility(View.VISIBLE);
-            estc.setVisibility(View.VISIBLE);
-            exercising.setVisibility(View.VISIBLE);
-            espl.setVisibility(View.VISIBLE);
-            etil.setVisibility(View.VISIBLE);
-            estl.setVisibility(View.VISIBLE);
+            exercise_time_content.setVisibility(View.VISIBLE);
+            exercise_speed_content.setVisibility(View.VISIBLE);
+            exercise_step_content.setVisibility(View.VISIBLE);
+            exercise_label.setVisibility(View.VISIBLE);
+            exercise_speed_label.setVisibility(View.VISIBLE);
+            exercise_time_label.setVisibility(View.VISIBLE);
+            exercise_step_label.setVisibility(View.VISIBLE);
             walkUpdateTask runner=new walkUpdateTask();
             runner.execute();
             seb.setTextColor(Color.parseColor("#FF0000"));
@@ -231,13 +233,13 @@ public class MainActivity extends AppCompatActivity {
         // when in intentional walk
         else{
             state=0;
-            etic.setVisibility(View.INVISIBLE);
-            espc.setVisibility(View.INVISIBLE);
-            estc.setVisibility(View.INVISIBLE);
-            exercising.setVisibility(View.INVISIBLE);
-            espl.setVisibility(View.INVISIBLE);
-            etil.setVisibility(View.INVISIBLE);
-            estl.setVisibility(View.INVISIBLE);
+            exercise_time_content.setVisibility(View.INVISIBLE);
+            exercise_speed_content.setVisibility(View.INVISIBLE);
+            exercise_step_content.setVisibility(View.INVISIBLE);
+            exercise_label.setVisibility(View.INVISIBLE);
+            exercise_speed_label.setVisibility(View.INVISIBLE);
+            exercise_time_label.setVisibility(View.INVISIBLE);
+            exercise_step_label.setVisibility(View.INVISIBLE);
             seb.setText("Start");
             seb.setTextColor(Color.parseColor("#000000"));
 
