@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     private Button mock_step_button;
     private Boolean demo  = false;
     // Default goal is 5000
-    private Goal goal = new Goal(5000);
+    private Goal goal;
     private int newGoalStep;
     private int timeModifier;
 
@@ -170,10 +170,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switchState(v);
-
             }
         });
 
+        goal = new Goal(5000);
 
         mock_step_button = findViewById(R.id.mock_step);
         mock_step_button.setOnClickListener(new View.OnClickListener() {
@@ -215,12 +215,10 @@ public class MainActivity extends AppCompatActivity {
 
     /* function to handle situation when switching between intentional walk and normal walk */
     private void switchState(View v){
-        Button seb=findViewById(R.id.start_button);
-
         // when in normal walk
         if(state==0){
             state=1;
-            seb.setText("End");
+            start_button.setText("End");
             exercise_time_content.setVisibility(View.VISIBLE);
             exercise_speed_content.setVisibility(View.VISIBLE);
             exercise_step_content.setVisibility(View.VISIBLE);
@@ -228,9 +226,9 @@ public class MainActivity extends AppCompatActivity {
             exercise_speed_label.setVisibility(View.VISIBLE);
             exercise_time_label.setVisibility(View.VISIBLE);
             exercise_step_label.setVisibility(View.VISIBLE);
-            walkUpdateTask runner=new walkUpdateTask();
+            walkUpdateTask runner = new walkUpdateTask();
             runner.execute();
-            seb.setTextColor(Color.parseColor("#FF0000"));
+            start_button.setTextColor(Color.parseColor("#FF0000"));
             Toast.makeText(this, "Start Exercising!", Toast.LENGTH_SHORT).show();
         }
 
@@ -244,8 +242,8 @@ public class MainActivity extends AppCompatActivity {
             exercise_speed_label.setVisibility(View.INVISIBLE);
             exercise_time_label.setVisibility(View.INVISIBLE);
             exercise_step_label.setVisibility(View.INVISIBLE);
-            seb.setText("Start");
-            seb.setTextColor(Color.parseColor("#000000"));
+            start_button.setText("Start");
+            start_button.setTextColor(Color.parseColor("#000000"));
 
             // prompt user to change goal when goal is achieved
             if( goal.isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
@@ -271,10 +269,9 @@ public class MainActivity extends AppCompatActivity {
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
         long remaining = this.goal.getStep() - stepCount;
-        if(remaining>0){
+        if(remaining > 0){
             remaining_content.setText(String.valueOf(remaining));
         }
-
         // show "DONE!" when the goal is achieved and make a toast message to remind the user
         else if (!remaining_content.getText().toString().equals("DONE!")) {
             remaining_content.setText("DONE!");
@@ -346,11 +343,6 @@ public class MainActivity extends AppCompatActivity {
     /* setter of the goal count */
     public void setGoalCount(long goal) {
         goal_content.setText(String.valueOf(goal));
-    }
-
-    /* getter of the goal count */
-    public int getGoalCount() {
-        return this.goal.getStep();
     }
 
     /* function to show the dialog to prompt user to enter new goal */
