@@ -68,31 +68,30 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         protected String doInBackground(String... strings) {
-            int step = 1000;
             final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
 
             // create new intentional walk object
-            walk=new IntentionalWalk(currentTime);
-            final IncidentalWalk starting=new IncidentalWalk(Integer.parseInt(complete_content.getText().toString()));
+            walk = new IntentionalWalk(currentTime);
+            final IncidentalWalk starting = new IncidentalWalk(Integer.parseInt(complete_content.getText().toString()));
 
             // while walking
-            while(state==1){
+            while (state == 1){
                 try{
-                    Thread.sleep(step);
-                    String[] publishable=new String[3];
+                    Thread.sleep(1000);
+                    String[] publishable = new String[3];
                   
                     if (!demo) {
                         fitnessService.updateStepCount();
                     }
 
                     // set the steps and time
-                    walk.setStep(Integer.parseInt(complete_content.getText().toString())-starting.getStep());
-                    walk.setTime(Calendar.getInstance().getTimeInMillis()/1000);
+                    walk.setStep(Integer.parseInt(complete_content.getText().toString()) - starting.getStep());
+                    walk.setTime(Calendar.getInstance().getTimeInMillis() / 1000);
 
                     // allocate stats into corresponding slot
-                    publishable[0]=""+walk.getStep();
-                    publishable[1]=""+walk.getTimeElapsed();
-                    publishable[2]=""+walk.getSpeed();
+                    publishable[0] = "" + walk.getStep();
+                    publishable[1] = "" + walk.getTimeElapsed();
+                    publishable[2] = "" + walk.getSpeed();
                     publishProgress(publishable);
                 }
                 catch(InterruptedException e){
@@ -104,20 +103,19 @@ public class MainActivity extends AppCompatActivity {
 
         /* Keep track of stats when in intentional walk */
         protected void onProgressUpdate(String... text){
-            exercise_step_content.setText(text[0]+" steps");
-            exercise_time_content.setText(text[1]+" seconds");
-            exercise_speed_content.setText(text[2]+" km/h");
+            exercise_step_content.setText(text[0] + " steps");
+            exercise_time_content.setText(text[1] + " seconds");
+            exercise_speed_content.setText(text[2] + " km/h");
         }
 
         /* save the user stats using sharedPreferences */
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
+            SharedPreferences sharedPreferences=getSharedPreferences("user_name", MODE_PRIVATE);
             SharedPreferences.Editor editor=sharedPreferences.edit();
-            editor.putInt(""+walk.getTimeStart(),100);
+            editor.putInt("" + walk.getTimeStart(), 100);
             editor.commit();
-            System.out.println(""+walk.getTimeStart()+" "+walk.getStep());
         }
     }
 
@@ -144,7 +142,7 @@ public class MainActivity extends AppCompatActivity {
         fitnessService.setup();
 
         // Click on the update button will update steps count
-        update_button = findViewById(R.id.tmp_update_button);
+        update_button = findViewById(R.id.update_button);
         update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -169,6 +167,14 @@ public class MainActivity extends AppCompatActivity {
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
         remaining_content = findViewById(R.id.remaining_content);
+        exercise_time_content = findViewById(R.id.exercise_time_content);
+        exercise_speed_content = findViewById(R.id.exercise_speed_content);
+        exercise_step_content = findViewById(R.id.exercise_step_content);
+        exercise_label = findViewById(R.id.exercise_label);
+        exercise_time_label = findViewById(R.id.exercise_time_label);
+        exercise_speed_label = findViewById(R.id.exercise_speed_label);
+        exercise_step_label = findViewById(R.id.exercise_step_label);
+
         this.setGoalCount(this.goal.getStep());
 
         // manually chang the goal
@@ -181,14 +187,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // when not in intentional walk mode
-        if(state==0) {
-            exercise_time_content = findViewById(R.id.exercise_time_content);
-            exercise_speed_content = findViewById(R.id.exercise_speed_content);
-            exercise_step_content = findViewById(R.id.exercise_step_content);
-            exercise_label = findViewById(R.id.exercise_label);
-            exercise_time_label = findViewById(R.id.exercise_time_label);
-            exercise_speed_label = findViewById(R.id.exercise_speed_label);
-            exercise_step_label = findViewById(R.id.exercise_step_label);
+        if(state == 0) {
             exercise_time_content.setVisibility(View.INVISIBLE);
             exercise_speed_content.setVisibility(View.INVISIBLE);
             exercise_step_content.setVisibility(View.INVISIBLE);

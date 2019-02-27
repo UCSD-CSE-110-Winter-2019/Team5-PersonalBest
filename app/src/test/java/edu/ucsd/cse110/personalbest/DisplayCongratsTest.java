@@ -3,9 +3,6 @@ package edu.ucsd.cse110.personalbest;
 import android.content.Intent;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import junit.framework.Assert;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +43,7 @@ public class DisplayCongratsTest {
         activity = Robolectric.buildActivity(MainActivity.class, intent).create().get();
 
         complete_content = activity.findViewById(R.id.complete_content);
-        update_button = activity.findViewById(R.id.tmp_update_button);
+        update_button = activity.findViewById(R.id.update_button);
         goal_content = activity.findViewById(R.id.goal_content);
         remaining_content = activity.findViewById(R.id.remaining_content);
     }
