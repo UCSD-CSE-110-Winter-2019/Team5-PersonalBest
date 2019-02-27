@@ -51,6 +51,10 @@ public class MainActivity extends AppCompatActivity {
     private TextView exercise_speed_content;
 
     private Button update_button;
+    private Button goal_update_button;
+    private Button start_button;
+
+
     private Button mock_step_button;
     private Boolean demo  = false;
     // Default goal is 5000
@@ -152,6 +156,25 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        // manually chang the goal
+        goal_update_button = findViewById(R.id.goal_update_button);
+        goal_update_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptDialog("Set Up New Goal", "Input your new goal here:");
+            }
+        });
+
+        start_button=findViewById(R.id.start_button);
+        start_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchState(v);
+
+            }
+        });
+
+
         mock_step_button = findViewById(R.id.mock_step);
         mock_step_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -177,15 +200,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.setGoalCount(this.goal.getStep());
 
-        // manually chang the goal
-        Button change = findViewById(R.id.goal_update_button);
-        change.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                promptDialog("Set Up New Goal", "Input your new goal here:");
-            }
-        });
-
         // when not in intentional walk mode
         if(state == 0) {
             exercise_time_content.setVisibility(View.INVISIBLE);
@@ -196,15 +210,6 @@ public class MainActivity extends AppCompatActivity {
             exercise_time_label.setVisibility(View.INVISIBLE);
             exercise_step_label.setVisibility(View.INVISIBLE);
         }
-        Button seb=findViewById(R.id.start_button);
-        seb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchState(v);
-
-            }
-        });
-
         timeModifier=0;
     }
 
