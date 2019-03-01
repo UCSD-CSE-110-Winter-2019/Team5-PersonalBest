@@ -30,7 +30,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
-    private static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
+    public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
     private static final String TAG = "StepCountActivity";
     private static final long MS_IN_DAY = 86400000;
     // Default service key is GOOGLE_FIT for the MainActivity
