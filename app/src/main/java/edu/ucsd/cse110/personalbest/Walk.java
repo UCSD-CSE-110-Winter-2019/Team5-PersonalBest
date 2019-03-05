@@ -1,12 +1,12 @@
 package edu.ucsd.cse110.personalbest;
 
 /* incidental step class */
-public class IncidentalWalk implements Step {
+public class Walk implements Step {
     private int step;
-    IncidentalWalk(){
+    public Walk(){
         this.step=0;
     }
-    IncidentalWalk(int step){this.step=step;}
+    public Walk(int step){this.step=step;}
     public void setStep(int step){
         this.step=step;
     }

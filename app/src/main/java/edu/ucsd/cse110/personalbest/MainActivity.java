@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
-    IntentionalWalk walk;
+    Exercise walk;
 
     /* keep track of stats when the app is running in background */
     private class walkUpdateTask extends AsyncTask<String,String,String>{
@@ -75,8 +75,8 @@ public class MainActivity extends AppCompatActivity {
             final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
 
             // create new intentional walk object
-            walk = new IntentionalWalk(currentTime);
-            final IncidentalWalk starting = new IncidentalWalk(Integer.parseInt(complete_content.getText().toString()));
+            walk = new Exercise(currentTime);
+            final Walk starting = new Walk(Integer.parseInt(complete_content.getText().toString()));
 
             // while walking
             while (state == 1){

@@ -1,22 +1,22 @@
 package edu.ucsd.cse110.personalbest;
 
-public class IntentionalWalk implements Step {
+public class Exercise implements Step {
     private int step;
     private long timeCurrent; //Change to relevant time class if necessary
     private long timeStart; //Change to relevant time class if necessary
     private long timeElapsed; //Change to relevant time class if necessary
     //Dummy default constructor; do not use
-    IntentionalWalk(){
+    public Exercise(){
         this.step=0;
     }
     //Constructor for user pressing start
-    IntentionalWalk(long timeStart){
+    public Exercise(long timeStart){
         this.step=0;
         this.timeStart=timeStart;
     }
     //Constructor for intentional step collection for the bar chart statistics; create one when one
     //intentional walk is finished and update this when others are finished
-    IntentionalWalk(int step, long timeElapsed){
+    public Exercise(int step, long timeElapsed){
         this.step=step;
         this.timeStart=0; //Don't care
         this.timeCurrent=0; //Don't care

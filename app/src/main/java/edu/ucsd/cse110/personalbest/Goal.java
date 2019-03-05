@@ -4,11 +4,11 @@ package edu.ucsd.cse110.personalbest;
 public class Goal implements Step {
     private int goal;
 
-    Goal(){
+    public Goal(){
         this.goal = 0;
     }
 
-    Goal(int goal){
+    public Goal(int goal){
         this.goal = goal;
     }
 
