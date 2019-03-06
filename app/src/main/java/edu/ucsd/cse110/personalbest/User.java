@@ -28,85 +28,45 @@ public class User implements ISubject<IUserObserver>{
     //member variables
     public static int trackLength=7; //The number of days we track a user
     public static final int startingGoal=5000; //The starting goal of a new user
-    private Goal goal;
-    private Walk currentWalk;
-    private Exercise currentExercise;
-    private Walk[] walkHistory;
-    private Exercise[] exerciseHistory;
-    private Goal[] goalHistory;
-    private int height;
+    private int goal;
+    // Walk is object for the  total step
+    private int curSteps;
+    // Exercise is the object for the exercise part
+    private Exercise curExercise;
 
     // User constrcutor
     User(){
         this.observers = new ArrayList<IUserObserver>();
-        this.goal = new Goal();
-        this.currentWalk = new Walk();
-        this.currentExercise = new Exercise();
-        this.walkHistory = new Walk[DAY_OF_MONTH];
-        this.exerciseHistory = new Exercise[DAY_OF_MONTH];
-        this.goalHistory = new Goal[DAY_OF_MONTH];
+        this.goal = 0;
+        this.curSteps = 0;
+        this.curExercise = new Exercise();
     }
 
-    public Goal getGoal(){
-        return goal;
+    public int getGoal(){
+        return this.goal;
     }
 
-    public Goal[] getGoalHistory(){
-        return goalHistory;
+
+    public int getCurSteps(){
+        return this.curSteps;
     }
 
-    public Walk getCurrentWalk(){
-        return currentWalk;
+    public Exercise getCurExercise(){
+        return curExercise;
     }
 
-    public Walk[] getWalkHistory(){
-        return walkHistory;
-    }
-
-    public Exercise getCurrentExercise(){
-        return currentExercise;
-    }
-
-    public Exercise[] getExerciseHistory(){
-        return exerciseHistory;
-    }
-
-    public int getHeight(){
-        return height;
-    }
-
-    public void setHeight(int height){
-        this.height=height;
+    public void setGoal(int goal){
+        this.goal = goal;
         this.notifyObservers();
     }
 
-    public void setGoal(Goal goal){
-        this.goal=goal;
+    public void setCurSteps(int curSteps){
+        this.curSteps = curSteps;
         this.notifyObservers();
     }
 
-    public void setGoalHistory(Goal[] goalHistory){
-        this.goalHistory=goalHistory;
-        this.notifyObservers();
-    }
-
-    public void setCurrentWalk(Walk currentWalk){
-        this.currentWalk=currentWalk;
-        this.notifyObservers();
-    }
-
-    public void setCurrentExercise(Exercise currentExercise){
-        this.currentExercise=currentExercise;
-        this.notifyObservers();
-    }
-
-    public void setWalkHistory(Walk[] walkHistory){
-        this.walkHistory=walkHistory;
-        this.notifyObservers();
-    }
-
-    public void setExerciseHistory(Exercise[] exerciseHistory){
-        this.exerciseHistory=exerciseHistory;
+    public void setCurExercise(Exercise curExercise){
+        this.curExercise = curExercise;
         this.notifyObservers();
     }
 }

@@ -97,7 +97,7 @@ public class stepTest {
 
     @Test
     public void setGoal(){
-        activity.setGoalCount(6000);
+        activity.setGoalContent(6000);
         goal_content = activity.findViewById(R.id.goal_content);
         btnUpdateSteps.performClick();
         assertEquals("6000", goal_content.getText().toString());
@@ -105,11 +105,11 @@ public class stepTest {
 
     @Test
     public void updateGoal(){
-        activity.setGoalCount(5000);
+        activity.setGoalContent(5000);
         goal_content = activity.findViewById(R.id.goal_content);
         btnUpdateSteps.performClick();
         assertEquals("5000", goal_content.getText().toString());
-        activity.setGoalCount(6000);
+        activity.setGoalContent(6000);
         goal_content = activity.findViewById(R.id.goal_content);
         btnUpdateSteps.performClick();
         assertEquals("6000", goal_content.getText().toString());
@@ -136,7 +136,7 @@ public class stepTest {
         @Override
         public void updateStepCount() {
             System.out.println(TAG + "updateStepCount");
-            mainActivity.setStepCount(nextStepCount);
+            mainActivity.setCompleteContent(nextStepCount);
         }
 
         @Override

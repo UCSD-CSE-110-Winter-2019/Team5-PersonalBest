@@ -1,11 +1,9 @@
 package edu.ucsd.cse110.personalbest.Helpers;
 
 import edu.ucsd.cse110.personalbest.Exercise;
-import edu.ucsd.cse110.personalbest.Goal;
-import edu.ucsd.cse110.personalbest.Step;
-import edu.ucsd.cse110.personalbest.Walk;
 
 public class StepIntHelper {
+    /*
     public static int[] extractStepArray(Step[] stepArray){
         int length=stepArray.length;
         int[] retArray=new int[length];
@@ -48,4 +46,5 @@ public class StepIntHelper {
         }
         return retArray;
     }
+    */
 }

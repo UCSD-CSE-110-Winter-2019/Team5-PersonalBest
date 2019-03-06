@@ -1,6 +1,6 @@
 package edu.ucsd.cse110.personalbest;
 
-public class Exercise implements Step {
+public class Exercise{
     private int step;
     private long timeCurrent; //Change to relevant time class if necessary
     private long timeStart; //Change to relevant time class if necessary
