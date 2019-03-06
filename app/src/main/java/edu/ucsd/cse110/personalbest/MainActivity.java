@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     private Button update_button;
     private Button goal_update_button;
     private Button start_button;
+    private Button message_button;
 
 
     private Button mock_step_button;
@@ -211,6 +212,19 @@ public class MainActivity extends AppCompatActivity {
             exercise_step_label.setVisibility(View.INVISIBLE);
         }
         timeModifier=0;
+
+        message_button = (Button) findViewById(R.id.message);
+        message_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                switchToMessage();
+            }
+        });
+    }
+
+    public void switchToMessage() {
+        Intent intent = new Intent(this, MessageActivity.class);
+        startActivity(intent);
     }
 
     /* function to handle situation when switching between intentional walk and normal walk */
