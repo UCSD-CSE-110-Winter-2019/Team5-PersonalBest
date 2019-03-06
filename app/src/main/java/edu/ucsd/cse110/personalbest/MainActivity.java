@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPrefManager sharedPrefManager;
 
-    // Default goal is 5000
-    private int newGoalStep;
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
@@ -342,8 +340,6 @@ public class MainActivity extends AppCompatActivity {
         builder.setTitle(title);
         builder.setMessage(message);
 
-        newGoalStep = -1;
-
         // Set up the input
         final EditText input = new EditText(this);
         // Specify the type of input as integer;
@@ -354,6 +350,7 @@ public class MainActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                int newGoalStep;
                 try {
                     newGoalStep = Integer.parseInt(input.getText().toString());
                 }
@@ -361,25 +358,9 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();
                     return;
                 }
-                if (newGoalStep != -1) {
-                    user.setGoal(newGoalStep);
-                    setGoalContent(user.getGoal());
-                    SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
-                    SharedPreferences.Editor editor=sharedPreferences.edit();
-                    Date now=new Date();
-                    Calendar calendar=Calendar.getInstance();
-                    calendar.setTime(now);
-                    editor.putInt("goal"+(calendar.getTimeInMillis()),user.getGoal());
-                    editor.commit();
-                    int complete = Integer.parseInt(complete_content.getText().toString());
-                    int remaining = newGoalStep - complete;
-                    if (remaining <= 0) {
-                        remaining_content.setText("DONE!");
-                    } else {
-                        remaining_content.setText(String.valueOf(remaining));
-                    }
-
-                }
+                user.setGoal(newGoalStep);
+                setGoalContent(user.getGoal());
+                setRemainingContent();
             }
         });
 
