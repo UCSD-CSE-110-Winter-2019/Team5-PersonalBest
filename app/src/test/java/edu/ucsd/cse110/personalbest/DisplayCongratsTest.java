@@ -28,7 +28,7 @@ public class DisplayCongratsTest {
     private TextView remaining_content;
     private Button update_button;
     private int goal;
-    private long nextStepCount;
+    private int nextStepCount;
 
     @Before
     public void setUp() throws Exception {

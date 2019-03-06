@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Button update_button;
     private Button goal_update_button;
+    private Button walk_history_button;
     private Button start_button;
     private Button messageButton;
 
@@ -149,7 +150,6 @@ public class MainActivity extends AppCompatActivity {
                 // setBarChart();
             }
         });
-
         // manually chang the goal
         goal_update_button = findViewById(R.id.goal_update_button);
         goal_update_button.setOnClickListener(new View.OnClickListener() {
@@ -158,7 +158,6 @@ public class MainActivity extends AppCompatActivity {
                 promptDialog("Set Up New Goal", "Input your new goal here:");
             }
         });
-
         start_button=findViewById(R.id.start_button);
         start_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -166,12 +165,18 @@ public class MainActivity extends AppCompatActivity {
                 switchState(v);
             }
         });
-
         messageButton = (Button) findViewById(R.id.message_button);
         messageButton.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 switchToMessage();
+            }
+        });
+        walk_history_button = (Button) findViewById(R.id.run_history_button);
+        walk_history_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                showBarChart(view);
             }
         });
 

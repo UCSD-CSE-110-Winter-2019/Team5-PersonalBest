@@ -29,8 +29,7 @@ public class stepTest {
     private TextView remaining_content;
     private Button btnUpdateSteps;
     private Button btnUpdateSteps2;
-    private long nextStepCount;
-    private long nextStepCount2;
+    private int nextStepCount;
 
     @Before
     public void setUp() throws Exception {

@@ -164,7 +164,6 @@
         android:layout_marginTop="20dp"
         android:layout_marginRight="100dp"
         android:layout_marginBottom="30dp"
-        android:onClick="showBarChart"
         android:text="@string/history_label"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="@id/update_button"
