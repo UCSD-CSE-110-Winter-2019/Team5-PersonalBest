@@ -52,13 +52,13 @@ public class MessageActivity extends AppCompatActivity {
                 finish();
             }
         });
-        /*
+
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage();
             }
-        });*/
+        });
 
         chat = FirebaseFirestore.getInstance()
                 .collection(COLLECTION_KEY)
