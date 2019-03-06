@@ -60,7 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPrefManager sharedPrefManager;
 
     // Default goal is 5000
-    private Goal goal;
     private int newGoalStep;
 
     public int[] weekSteps = new int[7];
@@ -150,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 fitnessService.updateStepCount();
-                setBarChart();
+                // setBarChart();
             }
         });
 
@@ -171,8 +170,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        goal = new Goal(5000);
-
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
@@ -185,17 +182,17 @@ public class MainActivity extends AppCompatActivity {
         exercise_speed_label = findViewById(R.id.exercise_speed_label);
         exercise_step_label = findViewById(R.id.exercise_step_label);
 
-        this.setGoalCount(this.goal.getStep());
+        this.user = new User();
+        this.sharedPreferences = getSharedPreferences("user_name",MODE_PRIVATE);
+        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences);
+        this.user.register(this.sharedPrefManager);
+        sharedPrefManager.retrieveData(this.user);
+
+        this.setGoalCount(this.user.getGoal().getStep());
 
         // when not in intentional walk mode
         if(state == 0) {
-            exercise_time_content.setVisibility(View.INVISIBLE);
-            exercise_speed_content.setVisibility(View.INVISIBLE);
-            exercise_step_content.setVisibility(View.INVISIBLE);
-            exercise_label.setVisibility(View.INVISIBLE);
-            exercise_speed_label.setVisibility(View.INVISIBLE);
-            exercise_time_label.setVisibility(View.INVISIBLE);
-            exercise_step_label.setVisibility(View.INVISIBLE);
+            setExerciseVisibility(View.INVISIBLE);
         }
     }
 
@@ -220,7 +217,7 @@ public class MainActivity extends AppCompatActivity {
             start_button.setTextColor(Color.parseColor("#000000"));
 
             // prompt user to change goal when goal is achieved
-            if( goal.isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
+            if( this.user.getGoal().isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
                 promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
             }
         }
@@ -252,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
     /* set the step count */
     public void setStepCount(long stepCount) {
         complete_content.setText(String.valueOf(stepCount));
-        long remaining = this.goal.getStep() - stepCount;
+        long remaining = this.user.getGoal().getStep() - stepCount;
         if(remaining > 0){
             remaining_content.setText(String.valueOf(remaining));
         }
@@ -355,14 +352,14 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (newGoalStep != -1) {
-                    goal.setStep(newGoalStep);
-                    setGoalCount(goal.getStep());
+                    user.setGoal(new Goal(newGoalStep));
+                    setGoalCount(user.getGoal().getStep());
                     SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();
                     Date now=new Date();
                     Calendar calendar=Calendar.getInstance();
                     calendar.setTime(now);
-                    editor.putInt("goal"+(calendar.getTimeInMillis()),goal.getStep());
+                    editor.putInt("goal"+(calendar.getTimeInMillis()),user.getGoal().getStep());
                     editor.commit();
                     int complete = Integer.parseInt(complete_content.getText().toString());
                     int remaining = newGoalStep - complete;
@@ -393,6 +390,6 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         fitnessService.updateStepCount();
-        setBarChart();
+        // setBarChart();
     }
 }

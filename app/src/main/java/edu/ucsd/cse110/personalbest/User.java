@@ -1,5 +1,6 @@
 package edu.ucsd.cse110.personalbest;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class User implements ISubject<IUserObserver>{
@@ -37,15 +38,13 @@ public class User implements ISubject<IUserObserver>{
 
     // User constrcutor
     User(){
-        /*
+        this.observers = new ArrayList<IUserObserver>();
         this.goal = new Goal();
         this.currentWalk = new Walk();
         this.currentExercise = new Exercise();
         this.walkHistory = new Walk[DAY_OF_MONTH];
         this.exerciseHistory = new Exercise[DAY_OF_MONTH];
         this.goalHistory = new Goal[DAY_OF_MONTH];
-        */
-
     }
 
     public Goal getGoal(){

@@ -23,7 +23,7 @@ public class SharedPrefManager implements IUserObserver {
     public static final String USER_EXERCISE_KEY = "userExercise";
     public static final String USER_EXERCISE_HISTORY_KEY = "userExerciseHistory";
 
-    SharedPrefManager(SharedPreferences sharedPreferences){
+    public SharedPrefManager(SharedPreferences sharedPreferences){
         this.sharedPreferences=sharedPreferences;
         this.editor=sharedPreferences.edit();
     }
