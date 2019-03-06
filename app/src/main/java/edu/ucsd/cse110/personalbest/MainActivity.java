@@ -62,11 +62,9 @@ public class MainActivity extends AppCompatActivity {
 
     // Default goal is 5000
     private int newGoalStep;
-
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
-    Exercise walk;
 
     /* keep track of stats when the app is running in background */
     private class walkUpdateTask extends AsyncTask<String,String,String>{
@@ -74,10 +72,10 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
             final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
-
+            fitnessService.updateStepCount();
             // create new intentional walk object
-            walk = new Exercise(currentTime);
-            final Walk starting = new Walk(Integer.parseInt(complete_content.getText().toString()));
+            user.setCurExercise(new Exercise(currentTime));
+            int start_step = user.getCurSteps();
 
             // while walking
             while (state == 1){
@@ -88,20 +86,20 @@ public class MainActivity extends AppCompatActivity {
                     fitnessService.updateStepCount();
 
                     // set the steps and time
-                    walk.setStep(Integer.parseInt(complete_content.getText().toString()) - starting.getStep());
-                    walk.setTime(Calendar.getInstance().getTimeInMillis() / 1000);
+                    user.getCurExercise().setStep(user.getCurSteps() - start_step);
+                    user.getCurExercise().setTime(Calendar.getInstance().getTimeInMillis() / 1000);
 
                     // allocate stats into corresponding slot
-                    publishable[0] = "" + walk.getStep();
-                    publishable[1] = "" + walk.getTimeElapsed();
-                    publishable[2] = "" + walk.getSpeed();
+                    publishable[0] = "" + user.getCurExercise().getStep();
+                    publishable[1] = "" + user.getCurExercise().getTimeElapsed();
+                    publishable[2] = "" + user.getCurExercise().getSpeed();
                     publishProgress(publishable);
                 }
                 catch(InterruptedException e){
                     e.printStackTrace();
                 }
             }
-            return "Congratulations! You walked "+walk.getStep()+" steps during this workout.";
+            return "Congratulations! You walked "+user.getCurExercise().getStep()+" steps during this workout.";
         }
 
         /* Keep track of stats when in intentional walk */
@@ -117,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(s);
             SharedPreferences sharedPreferences=getSharedPreferences("user_name", MODE_PRIVATE);
             SharedPreferences.Editor editor=sharedPreferences.edit();
-            editor.putInt("" + walk.getTimeStart(), 100);
+            editor.putInt("" + user.getCurExercise().getTimeStart(), 100);
             editor.commit();
         }
     }
@@ -197,7 +195,8 @@ public class MainActivity extends AppCompatActivity {
         this.user.register(this.sharedPrefManager);
         sharedPrefManager.retrieveData(this.user);
 
-        this.setGoalCount(this.user.getGoal().getStep());
+        this.setGoalContent(this.user.getGoal());
+        fitnessService.updateStepCount();
 
         // when not in intentional walk mode
         if(state == 0) {
@@ -213,8 +212,8 @@ public class MainActivity extends AppCompatActivity {
     /* function to handle situation when switching between intentional walk and normal walk */
     private void switchState(View v){
         // when in normal walk
-        if(state==0){
-            state=1;
+        if(state == 0){
+            state = 1;
             start_button.setText("End");
             setExerciseVisibility(View.VISIBLE);
             walkUpdateTask runner = new walkUpdateTask();
@@ -225,15 +224,10 @@ public class MainActivity extends AppCompatActivity {
 
         // when in intentional walk
         else{
-            state=0;
+            state = 0;
             setExerciseVisibility(View.INVISIBLE);
             start_button.setText("Start");
             start_button.setTextColor(Color.parseColor("#000000"));
-
-            // prompt user to change goal when goal is achieved
-            if( this.user.getGoal().isAchieved( Integer.parseInt(complete_content.getText().toString()) ) ) {
-                promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
-            }
         }
     }
 
@@ -260,10 +254,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /* set the step count */
-    public void setStepCount(long stepCount) {
+    public void setCompleteContent(int stepCount) {
+        this.user.setCurSteps(stepCount);
         complete_content.setText(String.valueOf(stepCount));
-        long remaining = this.user.getGoal().getStep() - stepCount;
+    }
+
+    public void setRemainingContent() {
+        int remaining = this.user.getGoal() - this.user.getCurSteps();
         if(remaining > 0){
             remaining_content.setText(String.valueOf(remaining));
         }
@@ -272,6 +269,10 @@ public class MainActivity extends AppCompatActivity {
             remaining_content.setText("DONE!");
             Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    public void setGoalContent(int goal) {
+        goal_content.setText(String.valueOf(goal));
     }
 
     /* function to show the bar chart recording user's past week's work out */
@@ -335,11 +336,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /* setter of the goal count */
-    public void setGoalCount(long goal) {
-        goal_content.setText(String.valueOf(goal));
-    }
-
     /* function to show the dialog to prompt user to enter new goal */
     private void promptDialog ( String title, String message ) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -366,14 +362,14 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }
                 if (newGoalStep != -1) {
-                    user.setGoal(new Goal(newGoalStep));
-                    setGoalCount(user.getGoal().getStep());
+                    user.setGoal(newGoalStep);
+                    setGoalContent(user.getGoal());
                     SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
                     SharedPreferences.Editor editor=sharedPreferences.edit();
                     Date now=new Date();
                     Calendar calendar=Calendar.getInstance();
                     calendar.setTime(now);
-                    editor.putInt("goal"+(calendar.getTimeInMillis()),user.getGoal().getStep());
+                    editor.putInt("goal"+(calendar.getTimeInMillis()),user.getGoal());
                     editor.commit();
                     int complete = Integer.parseInt(complete_content.getText().toString());
                     int remaining = newGoalStep - complete;

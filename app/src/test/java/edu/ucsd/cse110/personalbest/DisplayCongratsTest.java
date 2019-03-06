@@ -121,7 +121,7 @@ public class DisplayCongratsTest {
         @Override
         public void updateStepCount() {
             System.out.println(TAG + "updateStepCount");
-            mainActivity.setStepCount(nextStepCount);
+            mainActivity.setCompleteContent(nextStepCount);
         }
 
         @Override
