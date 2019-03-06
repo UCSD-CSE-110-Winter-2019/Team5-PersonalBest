@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "520368258236",
+    "firebase_url": "https://team5-personalbest.firebaseio.com",
+    "project_id": "team5-personalbest",
+    "storage_bucket": "team5-personalbest.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:520368258236:android:feec511b0f52582e",
+        "android_client_info": {
+          "package_name": "edu.ucsd.cse110.personalbest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "520368258236-sajav6d8snk3s58relk9v6igqlf2bdpm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBbx35XOn9rymEEszAsDxH-LRqQAu0ebuY"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
