@@ -4,13 +4,15 @@ import android.content.SharedPreferences;
 
 import edu.ucsd.cse110.personalbest.Exercise;
 import edu.ucsd.cse110.personalbest.Goal;
+import edu.ucsd.cse110.personalbest.ISubject;
+import edu.ucsd.cse110.personalbest.IUserObserver;
 import edu.ucsd.cse110.personalbest.Step;
 import edu.ucsd.cse110.personalbest.User;
 import edu.ucsd.cse110.personalbest.Walk;
 
 import static edu.ucsd.cse110.personalbest.Helpers.StepIntHelper.*;
 
-public class SharedPrefManager {
+public class SharedPrefManager implements IUserObserver {
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
     public static final String USER_GOAL_KEY = "userGoal";
@@ -24,6 +26,11 @@ public class SharedPrefManager {
     SharedPrefManager(SharedPreferences sharedPreferences){
         this.sharedPreferences=sharedPreferences;
         this.editor=sharedPreferences.edit();
+    }
+
+    @Override
+    public void onDataChange(User user) {
+        this.publishData(user);
     }
 
     public void publishData(User user){
