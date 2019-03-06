@@ -54,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
     private Button update_button;
     private Button goal_update_button;
     private Button start_button;
+    private Button messageButton;
 
     private User user;
     private SharedPreferences sharedPreferences;
@@ -170,6 +171,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        messageButton = (Button) findViewById(R.id.message_button);
+        messageButton.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                switchToMessage();
+            }
+        });
+
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
@@ -194,6 +203,11 @@ public class MainActivity extends AppCompatActivity {
         if(state == 0) {
             setExerciseVisibility(View.INVISIBLE);
         }
+    }
+
+    private void switchToMessage(){
+        Intent intent = new Intent(this, MessageActivity.class);
+        startActivity(intent);
     }
 
     /* function to handle situation when switching between intentional walk and normal walk */
