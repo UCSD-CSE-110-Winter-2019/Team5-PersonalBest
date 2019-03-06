@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import edu.ucsd.cse110.personalbest.Managers.SharedPrefManager;
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
 import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
 import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
@@ -54,13 +55,13 @@ public class MainActivity extends AppCompatActivity {
     private Button goal_update_button;
     private Button start_button;
 
+    private User user;
+    private SharedPreferences sharedPreferences;
+    private SharedPrefManager sharedPrefManager;
 
-    private Button mock_step_button;
-    private Boolean demo  = false;
     // Default goal is 5000
     private Goal goal;
     private int newGoalStep;
-    private int timeModifier;
 
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
@@ -83,10 +84,8 @@ public class MainActivity extends AppCompatActivity {
                 try{
                     Thread.sleep(1000);
                     String[] publishable = new String[3];
-                  
-                    if (!demo) {
-                        fitnessService.updateStepCount();
-                    }
+
+                    fitnessService.updateStepCount();
 
                     // set the steps and time
                     walk.setStep(Integer.parseInt(complete_content.getText().toString()) - starting.getStep());
@@ -150,7 +149,6 @@ public class MainActivity extends AppCompatActivity {
         update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                demo = false;
                 fitnessService.updateStepCount();
                 setBarChart();
             }
@@ -174,17 +172,6 @@ public class MainActivity extends AppCompatActivity {
         });
 
         goal = new Goal(5000);
-
-        mock_step_button = findViewById(R.id.mock_step);
-        mock_step_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                demo = true;
-                int cur_step = Integer.parseInt(complete_content.getText().toString());
-                setStepCount(cur_step + 500);
-                setBarChart();
-            }
-        });
 
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
@@ -210,7 +197,6 @@ public class MainActivity extends AppCompatActivity {
             exercise_time_label.setVisibility(View.INVISIBLE);
             exercise_step_label.setVisibility(View.INVISIBLE);
         }
-        timeModifier=0;
     }
 
     /* function to handle situation when switching between intentional walk and normal walk */
@@ -219,13 +205,7 @@ public class MainActivity extends AppCompatActivity {
         if(state==0){
             state=1;
             start_button.setText("End");
-            exercise_time_content.setVisibility(View.VISIBLE);
-            exercise_speed_content.setVisibility(View.VISIBLE);
-            exercise_step_content.setVisibility(View.VISIBLE);
-            exercise_label.setVisibility(View.VISIBLE);
-            exercise_speed_label.setVisibility(View.VISIBLE);
-            exercise_time_label.setVisibility(View.VISIBLE);
-            exercise_step_label.setVisibility(View.VISIBLE);
+            setExerciseVisibility(View.VISIBLE);
             walkUpdateTask runner = new walkUpdateTask();
             runner.execute();
             start_button.setTextColor(Color.parseColor("#FF0000"));
@@ -235,13 +215,7 @@ public class MainActivity extends AppCompatActivity {
         // when in intentional walk
         else{
             state=0;
-            exercise_time_content.setVisibility(View.INVISIBLE);
-            exercise_speed_content.setVisibility(View.INVISIBLE);
-            exercise_step_content.setVisibility(View.INVISIBLE);
-            exercise_label.setVisibility(View.INVISIBLE);
-            exercise_speed_label.setVisibility(View.INVISIBLE);
-            exercise_time_label.setVisibility(View.INVISIBLE);
-            exercise_step_label.setVisibility(View.INVISIBLE);
+            setExerciseVisibility(View.INVISIBLE);
             start_button.setText("Start");
             start_button.setTextColor(Color.parseColor("#000000"));
 
@@ -250,6 +224,16 @@ public class MainActivity extends AppCompatActivity {
                 promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
             }
         }
+    }
+
+    private void setExerciseVisibility(int visibility) {
+        this.exercise_time_content.setVisibility(visibility);
+        this.exercise_speed_content.setVisibility(visibility);
+        this.exercise_step_content.setVisibility(visibility);
+        this.exercise_label.setVisibility(visibility);
+        this.exercise_speed_label.setVisibility(visibility);
+        this.exercise_time_label.setVisibility(visibility);
+        this.exercise_step_label.setVisibility(visibility);
     }
 
     /* check authentication during google fit setup */
@@ -378,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                     Date now=new Date();
                     Calendar calendar=Calendar.getInstance();
                     calendar.setTime(now);
-                    editor.putInt("goal"+(calendar.getTimeInMillis()+timeModifier),goal.getStep());
+                    editor.putInt("goal"+(calendar.getTimeInMillis()),goal.getStep());
                     editor.commit();
                     int complete = Integer.parseInt(complete_content.getText().toString());
                     int remaining = newGoalStep - complete;
@@ -408,15 +392,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!demo) {
-            fitnessService.updateStepCount();
-        }
+        fitnessService.updateStepCount();
         setBarChart();
-    }
-
-    //Mock time onclick method
-    public void mockTime(View view){
-        demo = true;
-        timeModifier+=5*60*1000;
     }
 }
