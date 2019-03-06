@@ -59,7 +59,6 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences sharedPreferences;
     private SharedPrefManager sharedPrefManager;
 
-
     // Default goal is 5000
     private Goal goal;
     private int newGoalStep;
@@ -206,13 +205,7 @@ public class MainActivity extends AppCompatActivity {
         if(state==0){
             state=1;
             start_button.setText("End");
-            exercise_time_content.setVisibility(View.VISIBLE);
-            exercise_speed_content.setVisibility(View.VISIBLE);
-            exercise_step_content.setVisibility(View.VISIBLE);
-            exercise_label.setVisibility(View.VISIBLE);
-            exercise_speed_label.setVisibility(View.VISIBLE);
-            exercise_time_label.setVisibility(View.VISIBLE);
-            exercise_step_label.setVisibility(View.VISIBLE);
+            setExerciseVisibility(View.VISIBLE);
             walkUpdateTask runner = new walkUpdateTask();
             runner.execute();
             start_button.setTextColor(Color.parseColor("#FF0000"));
@@ -222,13 +215,7 @@ public class MainActivity extends AppCompatActivity {
         // when in intentional walk
         else{
             state=0;
-            exercise_time_content.setVisibility(View.INVISIBLE);
-            exercise_speed_content.setVisibility(View.INVISIBLE);
-            exercise_step_content.setVisibility(View.INVISIBLE);
-            exercise_label.setVisibility(View.INVISIBLE);
-            exercise_speed_label.setVisibility(View.INVISIBLE);
-            exercise_time_label.setVisibility(View.INVISIBLE);
-            exercise_step_label.setVisibility(View.INVISIBLE);
+            setExerciseVisibility(View.INVISIBLE);
             start_button.setText("Start");
             start_button.setTextColor(Color.parseColor("#000000"));
 
@@ -237,6 +224,16 @@ public class MainActivity extends AppCompatActivity {
                 promptDialog("Update New Goal", "You have completed today's goal! Do you want to set a new goal?");
             }
         }
+    }
+
+    private void setExerciseVisibility(int visibility) {
+        this.exercise_time_content.setVisibility(visibility);
+        this.exercise_speed_content.setVisibility(visibility);
+        this.exercise_step_content.setVisibility(visibility);
+        this.exercise_label.setVisibility(visibility);
+        this.exercise_speed_label.setVisibility(visibility);
+        this.exercise_time_label.setVisibility(visibility);
+        this.exercise_step_label.setVisibility(visibility);
     }
 
     /* check authentication during google fit setup */
