@@ -185,11 +185,25 @@
         android:id="@+id/message_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Message"
-        android:layout_marginTop="30sp"
         android:layout_marginLeft="30sp"
+        android:layout_marginTop="28dp"
+        android:text="Message"
+        app:layout_constraintHorizontal_bias="0.601"
         app:layout_constraintLeft_toLeftOf="@id/start_button"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/remaining_content" />
+
+    <Button
+        android:id="@+id/friend_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="38dp"
+        android:layout_marginTop="62dp"
+        android:layout_marginEnd="10dp"
+        android:text="FriendList"
+        app:layout_constraintBottom_toTopOf="@+id/exercise_label"
+        app:layout_constraintEnd_toStartOf="@+id/start_button"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/remaining_label" />
 
 </android.support.constraint.ConstraintLayout>

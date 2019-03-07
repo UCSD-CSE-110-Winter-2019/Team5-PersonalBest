@@ -56,8 +56,9 @@ public class MainActivity extends AppCompatActivity {
     private Button walk_history_button;
     private Button start_button;
     private Button messageButton;
+    private Button listButton;
 
-    private User user;
+    public static User user;
     private SharedPreferences sharedPreferences;
     private SharedPrefManager sharedPrefManager;
 
@@ -172,6 +173,15 @@ public class MainActivity extends AppCompatActivity {
                 switchToMessage();
             }
         });
+
+        listButton = (Button) findViewById(R.id.friend_list);
+        listButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToList();
+            }
+        });
+
         walk_history_button = (Button) findViewById(R.id.run_history_button);
         walk_history_button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -179,6 +189,8 @@ public class MainActivity extends AppCompatActivity {
                 showBarChart(view);
             }
         });
+
+
 
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
@@ -209,6 +221,11 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchToMessage(){
         Intent intent = new Intent(this, MessageActivity.class);
+        startActivity(intent);
+    }
+
+    private void switchToList(){
+        Intent intent = new Intent( this, FriendListActivity.class);
         startActivity(intent);
     }
 
