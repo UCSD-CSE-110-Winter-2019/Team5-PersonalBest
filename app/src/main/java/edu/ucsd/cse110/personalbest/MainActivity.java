@@ -56,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private Button walk_history_button;
     private Button start_button;
     private Button messageButton;
+    private Button FriendListButton;
 
     private User user;
     private SharedPreferences sharedPreferences;
@@ -179,7 +180,6 @@ public class MainActivity extends AppCompatActivity {
                 showBarChart(view);
             }
         });
-
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
