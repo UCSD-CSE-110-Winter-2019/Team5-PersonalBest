@@ -70,7 +70,6 @@ public class MessageActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
         //call subscribe
-
         subscribeToNotificationsTopic();
 
     }
@@ -83,11 +82,10 @@ public class MessageActivity extends AppCompatActivity {
         //chat.add(newMessage);
         chat.add(newMessage).addOnSuccessListener(result -> {
             messageView.setText("");
-            //Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
-        //Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
+
     }
 
     private void initMessageUpdateListener() {
