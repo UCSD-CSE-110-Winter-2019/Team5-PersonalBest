@@ -6,6 +6,8 @@ import java.util.Collection;
 public class User implements ISubject<IUserObserver>{
     public static final int DAY_OF_MONTH = 30;
 
+    public String emailAddress = "abc";
+
     private Collection<IUserObserver> observers;
 
     @Override
@@ -54,6 +56,8 @@ public class User implements ISubject<IUserObserver>{
     public Exercise getCurExercise(){
         return curExercise;
     }
+
+    public String getEmailAddress() { return emailAddress; }
 
     public void setGoal(int goal){
         this.goal = goal;
