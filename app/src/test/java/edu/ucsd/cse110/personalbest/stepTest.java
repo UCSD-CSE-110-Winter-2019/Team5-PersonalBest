@@ -54,9 +54,9 @@ public class stepTest {
 
     @Test
     public void initialTest() {
-        assertEquals("", textSteps.getText().toString());
+        assertEquals("0", textSteps.getText().toString());
         assertEquals("5000", goal_content.getText().toString());
-        assertEquals("", remaining_content.getText().toString());
+        assertEquals("5000", remaining_content.getText().toString());
     }
 
     @Test
@@ -136,6 +136,7 @@ public class stepTest {
         public void updateStepCount() {
             System.out.println(TAG + "updateStepCount");
             mainActivity.setCompleteContent(nextStepCount);
+            mainActivity.setRemainingContent();
         }
 
         @Override

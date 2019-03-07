@@ -54,8 +54,8 @@ public class ViewStepInformationTest {
     @Test
     public void initializeTest() {
         assertEquals("5000", goal_content.getText().toString());
-        assertEquals("", complete_content.getText().toString());
-        assertEquals("", remaining_content.getText().toString());
+        assertEquals("0", complete_content.getText().toString());
+        assertEquals("5000", remaining_content.getText().toString());
     }
 
     /*
@@ -180,6 +180,7 @@ public class ViewStepInformationTest {
         public void updateStepCount() {
             System.out.println(TAG + "updateStepCount");
             mainActivity.setCompleteContent(nextStepCount);
+            mainActivity.setRemainingContent();
         }
 
         @Override
