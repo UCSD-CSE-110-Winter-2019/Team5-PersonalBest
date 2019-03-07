@@ -264,8 +264,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void setRemainingContent() {
         int remaining = this.user.getGoal() - this.user.getCurSteps();
-        System.out.println(this.user.getGoal());
-        System.out.println(this.user.getCurSteps());
         if(remaining > 0){
             remaining_content.setText(String.valueOf(remaining));
         }
