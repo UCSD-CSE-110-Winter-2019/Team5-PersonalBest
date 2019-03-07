@@ -69,7 +69,8 @@ public class MessageActivity extends AppCompatActivity {
         initMessageUpdateListener();
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
-
+        //call subscribe
+        
         subscribeToNotificationsTopic();
 
     }
