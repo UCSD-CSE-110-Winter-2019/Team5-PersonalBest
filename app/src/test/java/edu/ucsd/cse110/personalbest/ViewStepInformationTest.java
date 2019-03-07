@@ -23,7 +23,6 @@ public class ViewStepInformationTest {
     private TextView goal_content;
     private TextView remaining_content;
     private Button update_button;
-    private int goal;
     private int nextStepCount;
 
     @Before
