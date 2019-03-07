@@ -79,7 +79,7 @@ public class MessageActivity extends AppCompatActivity {
         //chat.add(newMessage);
         chat.add(newMessage).addOnSuccessListener(result -> {
             messageView.setText("");
-            Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
