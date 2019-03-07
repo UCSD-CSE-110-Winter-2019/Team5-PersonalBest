@@ -18,6 +18,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.List;
@@ -69,6 +70,8 @@ public class MessageActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
 
+        subscribeToNotificationsTopic();
+
     }
 
     private void sendMessage(){
@@ -79,7 +82,7 @@ public class MessageActivity extends AppCompatActivity {
         //chat.add(newMessage);
         chat.add(newMessage).addOnSuccessListener(result -> {
             messageView.setText("");
-            Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(error -> {
             Log.e(TAG, error.getLocalizedMessage());
         });
@@ -110,6 +113,19 @@ public class MessageActivity extends AppCompatActivity {
                 chatView.append(sb.toString());
             }
         });
+    }
+
+    private void subscribeToNotificationsTopic() {
+        FirebaseMessaging.getInstance().subscribeToTopic(DOCUMENT_KEY)
+                .addOnCompleteListener(task -> {
+                            String msg = "Subscribed to notifications";
+                            if (!task.isSuccessful()) {
+                                msg = "Subscribe to notifications failed";
+                            }
+                            Log.d(TAG, msg);
+                            Toast.makeText(MessageActivity.this, msg, Toast.LENGTH_SHORT).show();
+                        }
+                );
     }
 
 }
