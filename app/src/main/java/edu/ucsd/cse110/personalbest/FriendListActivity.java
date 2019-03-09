@@ -24,7 +24,7 @@ import java.util.Map;
 
 public class FriendListActivity extends AppCompatActivity {
 
-    String COLLECTION_KEY = "kk";
+    String COLLECTION_KEY = "users";
     String REQ_KEY = "Requested friends";
     String LIST_KEY = "Friend list";
     String REQ_EMAIL_KEY = "Requested Email";
@@ -37,8 +37,10 @@ public class FriendListActivity extends AppCompatActivity {
 
     String tmpStringFriend = "xig113@ucsd.edu";//For test
     String tmpStringRequest = "ziw330@ucsd.edu";//For test
+    String inputEmail;
 
-    boolean isFriend = false; // Check this email is friend or not
+    private boolean isFriend = false;
+    private boolean isRequested = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,62 +92,17 @@ public class FriendListActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                //Get the email in friend list
-                friendlist.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        String TAG = "";
-                        if (task.isSuccessful()){ //Find email in request list
-                            for (QueryDocumentSnapshot document : task.getResult()){
-                                Log.d(TAG, document.getId() + " => " + document.getData());
-                                //System.out.println(document.getString("Friend's Email"));
-                                //System.out.println(tmpStringFriend);
-                                if(tmpStringFriend.equals(document.getString("Friend's Email"))) {
-                                    System.out.println("You have this friend");
-                                    isFriend = true;
-                                    break;
-                                }
-                                System.out.println("Email is: " + document.getData().values()); //For test
-                            }
-                        }
-                        else{ //No email in friend list
-                            Log.d(TAG, "Error getting documents: ", task.getException());
-                            //System.out.println(TAG); //For test
-                        }
-                    }
-                });
-                if(isFriend == false) {
-                    //Get email in request list
-                    request.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                            String TAG = "";
-                            if (task.isSuccessful()) { //Find email in request list
-                                for (QueryDocumentSnapshot document : task.getResult()) {
-                                    Log.d(TAG, document.getId() + " => " + document.getData());
-                                    if(tmpStringRequest.equals(document.getString("Requested Email"))){
-                                        System.out.println("This person is in your request list");
-                                        break;
-                                    }
-                                    else {
-                                        Map<String, String> reqEmail = new HashMap<>();
-                                        reqEmail.put(REQ_EMAIL_KEY, tmpStringRequest);
-                                        request.add(reqEmail);
-                                    }
-                                    //System.out.println(TAG); //For test
-                                }
-                            } else { //No email in request list
-                                Log.d(TAG, "Error getting documents: ", task.getException());
-                                //System.out.println(TAG); //For test
-                            }
-                        }
-                    });
+
+                inputEmail = input.getText().toString();
+
+                if ( !checkFriendList( inputEmail ) && !checkRequestList( inputEmail ) ) {
+                    requestFriend(inputEmail);
                 }
             }
         });
 
         // set the negative button ("No" button)
-        builder.setNegativeButton("Cancle", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
@@ -154,5 +111,63 @@ public class FriendListActivity extends AppCompatActivity {
 
         // show the dialog
         builder.show();
+    }
+
+    private boolean checkFriendList ( String email ) {
+        //Get the email in friend list
+        friendlist.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                String TAG = "";
+                if (task.isSuccessful()){ //Find email in request list
+                    for (QueryDocumentSnapshot document : task.getResult()){
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        //System.out.println(document.getString("Friend's Email"));
+                        //System.out.println(tmpStringFriend);
+                        if(email.equals(document.getString("Friend's Email"))) {
+                            //TODO toast
+                            System.out.println("You have this friend");
+                            isFriend = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        return isFriend;
+    }
+
+    private boolean checkRequestList ( String email ) {
+        //Get email in request list
+        request.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                String TAG = "";
+                if (task.isSuccessful()) { //Find email in request list
+
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        if(email.equals(document.getString("Requested Email"))){
+                            //TODO toast
+                            System.out.println("This person is in your request list");
+                            isRequested = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+        return isRequested;
+    }
+
+    private boolean checkAnotherRequestList( String email ) {
+        DocumentReference tempDoc = users.document( email );
+        return true;
+    }
+
+    private void requestFriend ( String email ) {
+        Map<String, String> reqEmail = new HashMap<>();
+        reqEmail.put(REQ_EMAIL_KEY, email);
+        request.add(reqEmail);
     }
 }

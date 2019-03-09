@@ -6,7 +6,7 @@ import java.util.Collection;
 public class User implements ISubject<IUserObserver>{
     public static final int DAY_OF_MONTH = 30;
 
-    public String emailAddress = "abc";
+    public String emailAddress = "abc@ucsd.edu";
 
     private Collection<IUserObserver> observers;
 
