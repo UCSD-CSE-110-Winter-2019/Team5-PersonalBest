@@ -7,6 +7,8 @@ import android.os.Bundle;
 //import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -90,7 +93,8 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void initMessageUpdateListener() {
-        chat.addSnapshotListener((newChatSnapShot, error) -> {
+        chat.orderBy(TIMESTAMP_KEY, Query.Direction.DESCENDING)
+                .addSnapshotListener((newChatSnapShot, error) -> {
             if (error != null) {
                 Log.e(TAG, error.getLocalizedMessage());
                 return;
