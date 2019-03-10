@@ -142,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
         this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
         sharedPrefManager.retrieveData();
+
         // When running test, change service key to TEST_SERVICE
         if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
             fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
