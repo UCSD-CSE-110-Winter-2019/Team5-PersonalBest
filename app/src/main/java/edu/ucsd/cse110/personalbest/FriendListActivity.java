@@ -45,6 +45,7 @@ public class FriendListActivity extends AppCompatActivity {
     String inputEmail;
     String s;
     String userEmail;
+    String docID;
 
     private boolean isList = false;
 
@@ -59,14 +60,6 @@ public class FriendListActivity extends AppCompatActivity {
         selfDoc = users.document( userEmail );
         selfRequestList = selfDoc.collection(REQ_KEY);
         selfFriendList = selfDoc.collection(LIST_KEY);
-
-        Map<String, String> reqEmail = new HashMap<>();
-        reqEmail.put(REQ_EMAIL_KEY, "ziw330@ucsd.edu");
-        selfRequestList.add(reqEmail);
-
-        Map<String, String> friEmail = new HashMap<>();
-        friEmail.put(FRIEND_EMAIL_KEY, "xig113@ucsd.edu");
-        selfFriendList.add(friEmail);
 
         Button addFriend = (Button) findViewById(R.id.add_friend);
         addFriend.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +133,10 @@ public class FriendListActivity extends AppCompatActivity {
             s = FRIEND_EMAIL_KEY;
         }
 
+        System.out.println(checkEmail);
+        System.out.println(list.getId());
+        System.out.println(s);
+
         //Get the email in friend list
         list.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -149,8 +146,13 @@ public class FriendListActivity extends AppCompatActivity {
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
 
+                        System.out.println(document.getString(s));
+
                         if(checkEmail.equals(document.getString( s ))) {
                             isList = true;
+                            if( list.getId() == REQ_KEY ) {
+                                docID = document.getId();
+                            }
                             break;
                         }
                     }
@@ -161,17 +163,29 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     private void requestFriend ( String email ) {
-
+        DocumentReference reqDoc;
         if ( checkList( otherRequestList, userEmail ) ) {
-            // remove request + add friend
 
-        } else { //meiyou
-            // add self request
+            reqDoc = otherRequestList.document(docID);
+            reqDoc.delete();
+
+            Map<String, String> friend1 = new HashMap<>();
+            friend1.put( FRIEND_EMAIL_KEY, userEmail );
+            otherFriendList.add(friend1);
+
+            Map<String, String> friend2 = new HashMap<>();
+            friend2.put( FRIEND_EMAIL_KEY, inputEmail );
+            selfFriendList.add(friend2);
+
+            Toast.makeText(FriendListActivity.this, "Successfully added!", Toast.LENGTH_LONG).show();
+
+        } else {
+            Map<String, String> req = new HashMap<>();
+            req.put( FRIEND_EMAIL_KEY, inputEmail );
+            selfRequestList.add(req);
+
+            Toast.makeText(FriendListActivity.this, "Wait for approval", Toast.LENGTH_LONG).show();
+
         }
-
-
-        Map<String, String> reqEmail = new HashMap<>();
-        reqEmail.put(REQ_EMAIL_KEY, email);
-        selfRequestList.add(reqEmail);
     }
 }
