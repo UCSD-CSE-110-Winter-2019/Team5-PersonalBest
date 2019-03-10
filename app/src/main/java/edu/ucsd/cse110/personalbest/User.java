@@ -51,30 +51,38 @@ public class User implements ISubject<IUserObserver>{
     }
 
     public Exercise getCurExercise(){
-        return curExercise;
+        return this.curExercise;
     }
 
     public String getEmailAddress() {
-        return emailAddress;
+        return this.emailAddress;
     }
 
-    public void setGoal(int goal){
+    public void setGoal(int goal, boolean notify){
         this.goal = goal;
-        this.notifyObservers();
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 
-    public void setCurSteps(int curSteps){
+    public void setCurSteps(int curSteps, boolean notify){
         this.curSteps = curSteps;
-        this.notifyObservers();
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 
-    public void setCurExercise(Exercise curExercise){
+    public void setCurExercise(Exercise curExercise, boolean notify){
         this.curExercise = curExercise;
-        this.notifyObservers();
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 
-    public void setEmailAddress(String emailAddress) {
+    public void setEmailAddress(String emailAddress, boolean notify) {
         this.emailAddress = emailAddress;
-        this.notifyObservers();
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 }
