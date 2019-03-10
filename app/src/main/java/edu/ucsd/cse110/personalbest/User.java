@@ -1,10 +1,15 @@
 package edu.ucsd.cse110.personalbest;
 
+import android.util.Log;
+
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 
 public class User implements ISubject<IUserObserver>{
     public static final int DAY_OF_MONTH = 30;
+    private static final int MS_IN_DAY = 86400000;
 
     private Collection<IUserObserver> observers;
 
@@ -15,6 +20,11 @@ public class User implements ISubject<IUserObserver>{
     private int curSteps;
     // Exercise is the object for the exercise part
     private Exercise curExercise;
+
+    private int currentDay;
+    private ArrayList<Integer> goalHistory;
+    private ArrayList<Integer> walkHistory;
+    private ArrayList<Integer> exerciseHistory;
 
     @Override
     public void register(IUserObserver observer) {
@@ -40,26 +50,41 @@ public class User implements ISubject<IUserObserver>{
         this.goal = 0;
         this.curSteps = 0;
         this.curExercise = new Exercise();
+        this.currentDay = (int)(Calendar.getInstance().getTimeInMillis() / MS_IN_DAY);
+        this.goalHistory = new ArrayList<>();
+        this.walkHistory = new ArrayList<>();
+        this.exerciseHistory = new ArrayList<>();
     }
 
-    public int getGoal(){
-        return this.goal;
-    }
+    public int getGoal() { return this.goal; }
 
-    public int getCurSteps(){
-        return this.curSteps;
-    }
+    public int getCurSteps() { return this.curSteps; }
 
-    public Exercise getCurExercise(){
-        return this.curExercise;
-    }
+    public Exercise getCurExercise() { return this.curExercise; }
 
-    public String getEmailAddress() {
-        return this.emailAddress;
+    public String getEmailAddress() { return this.emailAddress; }
+
+    public int getCurrentDay() { return this.currentDay; }
+
+    public ArrayList getGoalHistory() { return this.goalHistory; }
+
+    public ArrayList getWalkHistory() { return this.walkHistory; }
+
+    public ArrayList getExerciseHistory() { return this.exerciseHistory; }
+
+    public void compareCurrentDay(int currentDay) {
+        for (int i = 0; i < this.currentDay - currentDay; i++) {
+            this.goalHistory.add(0);
+            this.walkHistory.add(0);
+            this.exerciseHistory.add(0);
+        }
     }
 
     public void setGoal(int goal, boolean notify){
         this.goal = goal;
+        if (this.goalHistory.size() > 0) {
+            this.goalHistory.set(goalHistory.size() - 1, goal);
+        }
         if (notify) {
             this.notifyObservers();
         }
@@ -67,6 +92,9 @@ public class User implements ISubject<IUserObserver>{
 
     public void setCurSteps(int curSteps, boolean notify){
         this.curSteps = curSteps;
+        if (this.walkHistory.size() > 0) {
+            this.walkHistory.set(walkHistory.size() - 1, curSteps);
+        }
         if (notify) {
             this.notifyObservers();
         }
@@ -74,6 +102,9 @@ public class User implements ISubject<IUserObserver>{
 
     public void setCurExercise(Exercise curExercise, boolean notify){
         this.curExercise = curExercise;
+        if (this.exerciseHistory.size() > 0) {
+            this.exerciseHistory.set(exerciseHistory.size() - 1, curExercise.getStep());
+        }
         if (notify) {
             this.notifyObservers();
         }
@@ -85,4 +116,5 @@ public class User implements ISubject<IUserObserver>{
             this.notifyObservers();
         }
     }
+
 }

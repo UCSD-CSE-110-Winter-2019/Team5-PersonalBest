@@ -1,18 +1,14 @@
 package edu.ucsd.cse110.personalbest.Managers;
 
-import android.content.SharedPreferences;
-
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.microedition.khronos.egl.EGLDisplay;
-
-import edu.ucsd.cse110.personalbest.Exercise;
 import edu.ucsd.cse110.personalbest.IUserObserver;
 import edu.ucsd.cse110.personalbest.User;
 
@@ -21,9 +17,13 @@ public class FireStoreManager implements IUserObserver {
     CollectionReference collectionReference;
     DocumentReference documentReference;
     public static final String COLLECTION_KEY = "Users";
-    public static final String USER_GOAL_KEY = "userGoal";
-    public static final String USER_WALK_KEY = "userWalk";
-    public static final String USER_EXERCISE_KEY = "userExercise";
+    public static final String USER_GOAL_KEY = "Goal";
+    public static final String USER_WALK_KEY = "Walk";
+    public static final String USER_EXERCISE_KEY = "Exercise";
+    public static final String GOAL_HISTORY_KEY = "GoalHistory";
+    public static final String WALK_HISTORY_KEY = "WalkHistroy";
+    public static final String EXERCISE_HISTORY_KEY = "ExerciseHistory";
+
 
 
     public FireStoreManager(User user){
@@ -56,6 +56,17 @@ public class FireStoreManager implements IUserObserver {
         exercise_info.put(USER_EXERCISE_KEY, this.user.getCurExercise().getStep());
         this.documentReference.set(exercise_info, SetOptions.merge());
 
+        Map<String, ArrayList> goal_history_info = new HashMap<>();
+        goal_history_info.put(GOAL_HISTORY_KEY, this.user.getGoalHistory());
+        this.documentReference.set(goal_history_info, SetOptions.merge());
+
+        Map<String, ArrayList> walk_history_info = new HashMap<>();
+        walk_history_info.put(WALK_HISTORY_KEY, this.user.getWalkHistory());
+        this.documentReference.set(walk_history_info, SetOptions.merge());
+
+        Map<String, ArrayList> exercise_history_info = new HashMap<>();
+        exercise_history_info.put(EXERCISE_HISTORY_KEY, this.user.getExerciseHistory());
+        this.documentReference.set(exercise_history_info, SetOptions.merge());
     }
 
 }

@@ -19,9 +19,6 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.google.firebase.FirebaseApp;
-
 import edu.ucsd.cse110.personalbest.Managers.FireStoreManager;
 import edu.ucsd.cse110.personalbest.Managers.SharedPrefManager;
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
@@ -118,10 +115,6 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            SharedPreferences sharedPreferences=getSharedPreferences("user_name", MODE_PRIVATE);
-            SharedPreferences.Editor editor=sharedPreferences.edit();
-            editor.putInt("" + user.getCurExercise().getTimeStart(), 100);
-            editor.commit();
         }
     }
 
@@ -142,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
         this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
         this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
         sharedPrefManager.retrieveData();
+        sharedPrefManager.publishData();
 
         // When running test, change service key to TEST_SERVICE
         if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
