@@ -64,10 +64,15 @@ public class SharedPrefManager implements IUserObserver {
         this.user.setEmailAddress(sharedPreferences.getString(USER_EMAIL_KEY, ""), false);
 
         int size = sharedPreferences.getInt(SIZE_KEY, 0);
-        for (int i = 0; i < Math.max(size, 1); i++) {
-            this.user.getGoalHistory().add(sharedPreferences.getInt(GOAL_HISTORY_KEY,5000));
-            this.user.getWalkHistory().add(sharedPreferences.getInt(WALK_HISTORY_KEY,0));
-            this.user.getExerciseHistory().add(sharedPreferences.getInt(EXERCISE_HISTORY_KEY,0));
+        for (int i = 0; i < size; i++) {
+            this.user.getGoalHistory().add(sharedPreferences.getInt(GOAL_HISTORY_KEY + i,0));
+            this.user.getWalkHistory().add(sharedPreferences.getInt(WALK_HISTORY_KEY + i,0));
+            this.user.getExerciseHistory().add(sharedPreferences.getInt(EXERCISE_HISTORY_KEY + i,0));
+        }
+        if (size == 0) {
+            this.user.getGoalHistory().add(5000);
+            this.user.getWalkHistory().add(0);
+            this.user.getExerciseHistory().add(0);
         }
 
         // Must be the last one
