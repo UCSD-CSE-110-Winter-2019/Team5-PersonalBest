@@ -24,8 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FriendListActivity extends AppCompatActivity {
-
-    final String COLLECTION_KEY     = "users";
+    final String TAG = "FriendListActivity";
+    final String COLLECTION_KEY     = "Users";
     final String REQ_KEY            = "Requested friends";
     final String LIST_KEY           = "Friend list";
     final String REQ_EMAIL_KEY      = "Requested Email";
@@ -129,11 +129,12 @@ public class FriendListActivity extends AppCompatActivity {
 
         if( list.getId() == REQ_KEY ) {
             s = REQ_EMAIL_KEY;
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@@@@@@@@@");
         } else if ( list.getId() == LIST_KEY ) {
             s = FRIEND_EMAIL_KEY;
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@@@@@");
         }
 
-        System.out.println(checkEmail);
         System.out.println(list.getId());
         System.out.println(s);
 
@@ -141,7 +142,7 @@ public class FriendListActivity extends AppCompatActivity {
         list.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                String TAG = "";
+
                 if (task.isSuccessful()){ //Find email in selfRequestList list
                     for (QueryDocumentSnapshot document : task.getResult()){
                         Log.d(TAG, document.getId() + " => " + document.getData());
@@ -149,6 +150,7 @@ public class FriendListActivity extends AppCompatActivity {
                         System.out.println(document.getString(s));
 
                         if(checkEmail.equals(document.getString( s ))) {
+                            Log.d(TAG,"@@@@@@@@@@@@ found same email return true @@@@@@@");
                             isList = true;
                             if( list.getId() == REQ_KEY ) {
                                 docID = document.getId();
@@ -165,6 +167,7 @@ public class FriendListActivity extends AppCompatActivity {
     private void requestFriend ( String email ) {
         DocumentReference reqDoc;
         if ( checkList( otherRequestList, userEmail ) ) {
+            Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
 
             reqDoc = otherRequestList.document(docID);
             reqDoc.delete();
