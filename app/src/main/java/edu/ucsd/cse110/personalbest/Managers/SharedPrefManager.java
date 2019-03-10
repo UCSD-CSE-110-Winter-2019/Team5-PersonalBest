@@ -1,6 +1,7 @@
 package edu.ucsd.cse110.personalbest.Managers;
 
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import javax.microedition.khronos.egl.EGLDisplay;
 
@@ -36,14 +37,17 @@ public class SharedPrefManager implements IUserObserver {
         editor.putInt(USER_EXERCISE_KEY, this.user.getCurExercise().getStep());
         editor.putInt(USER_WALK_KEY, this.user.getCurSteps());
         editor.putString(USER_EMAIL_KEY, this.user.getEmailAddress());
+        Log.i("SharedPrefManager Set", this.user.getEmailAddress());
         editor.commit();
     }
 
     public void retrieveData(){
-        this.user.setGoal(sharedPreferences.getInt(USER_GOAL_KEY,5000));
-        this.user.setCurSteps(sharedPreferences.getInt(USER_WALK_KEY,0));
-        this.user.setCurExercise(new Exercise(sharedPreferences.getInt(USER_EXERCISE_KEY,0)));
-        this.user.setEmailAddress(sharedPreferences.getString(USER_EMAIL_KEY, ""));
+        this.user.setGoal(sharedPreferences.getInt(USER_GOAL_KEY,5000), false);
+        this.user.setCurSteps(sharedPreferences.getInt(USER_WALK_KEY,0), false);
+        this.user.setCurExercise(new Exercise(sharedPreferences.getInt(USER_EXERCISE_KEY,0)), false);
+        this.user.setEmailAddress(sharedPreferences.getString(USER_EMAIL_KEY, ""), false);
+        Log.i("SharedPrefManager Retrieve", sharedPreferences.getString(USER_EMAIL_KEY, ""));
+        Log.i("SharedPrefManager Retrieve", sharedPreferences.getInt(USER_GOAL_KEY,5000) + "");
     }
 
     private void storeIntArray(String baseKey,int[] intArray){

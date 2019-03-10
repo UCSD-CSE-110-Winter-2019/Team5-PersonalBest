@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
             final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
             fitnessService.updateStepCount();
             // create new intentional walk object
-            user.setCurExercise(new Exercise(currentTime));
+            user.setCurExercise(new Exercise(currentTime), true);
             int start_step = user.getCurSteps();
 
             // while walking
@@ -139,6 +139,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         this.user = new User();
+        this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
+        sharedPrefManager.retrieveData();
 
         // When running test, change service key to TEST_SERVICE
         if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
@@ -146,6 +149,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             this.fireStoreManager = new FireStoreManager(this.user);
         }
+
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
         // Initial setup for google fit service
@@ -219,10 +223,6 @@ public class MainActivity extends AppCompatActivity {
         exercise_speed_label = findViewById(R.id.exercise_speed_label);
         exercise_step_label = findViewById(R.id.exercise_step_label);
 
-        this.sharedPreferences = getSharedPreferences("user_name",MODE_PRIVATE);
-        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
-        sharedPrefManager.retrieveData();
-
         this.setGoalContent(this.user.getGoal());
         fitnessService.updateStepCount();
 
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setCompleteContent(int stepCount) {
-        this.user.setCurSteps(stepCount);
+        this.user.setCurSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
     }
 
@@ -399,13 +399,13 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return;
                     }
-                    user.setGoal(newGoalStep);
+                    user.setGoal(newGoalStep, true);
                     setGoalContent(user.getGoal());
                     setRemainingContent();
                 } else {
                     String userEmail;
                     userEmail = input.getText().toString();
-                    user.setEmailAddress(userEmail);
+                    user.setEmailAddress(userEmail, true);
                 }
             }
         });
@@ -426,7 +426,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        fitnessService.updateStepCount();
+        // fitnessService.updateStepCount();
         // setBarChart();
     }
 }

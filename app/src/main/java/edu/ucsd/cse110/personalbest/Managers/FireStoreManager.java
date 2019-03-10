@@ -27,18 +27,19 @@ public class FireStoreManager implements IUserObserver {
 
 
     public FireStoreManager(User user){
+        this.collectionReference = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
         this.user = user;
         this.user.register(this);
-        collectionReference = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
-        documentReference = collectionReference.document(user.getEmailAddress());
     }
 
     @Override
     public void onDataChange() {
-        this.publishData();
+        this.uploadData();
     }
 
-    public void publishData(){
+    public void uploadData(){
+        documentReference = this.collectionReference.document(this.user.getEmailAddress());
+
         Map<String, Integer> goal_info = new HashMap<>();
         goal_info.put(USER_GOAL_KEY, this.user.getGoal());
         this.documentReference.set(goal_info, SetOptions.merge());
@@ -50,9 +51,7 @@ public class FireStoreManager implements IUserObserver {
         Map<String, Integer> exercise_info = new HashMap<>();
         exercise_info.put(USER_EXERCISE_KEY, this.user.getCurExercise().getStep());
         this.documentReference.set(exercise_info, SetOptions.merge());
-    }
-
-    public void retrieveData(){
 
     }
+
 }
