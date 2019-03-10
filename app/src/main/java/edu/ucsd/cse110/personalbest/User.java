@@ -6,7 +6,7 @@ import java.util.Collection;
 public class User implements ISubject<IUserObserver>{
     public static final int DAY_OF_MONTH = 30;
 
-    public String emailAddress = "abc@ucsd.edu";
+    public String emailAddress;
 
     private Collection<IUserObserver> observers;
 
@@ -58,6 +58,10 @@ public class User implements ISubject<IUserObserver>{
     }
 
     public String getEmailAddress() { return emailAddress; }
+
+    public void setEmailAddress( String email ) {
+        emailAddress = email;
+    }
 
     public void setGoal(int goal){
         this.goal = goal;

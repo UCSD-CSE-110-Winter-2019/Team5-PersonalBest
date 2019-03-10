@@ -57,8 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private Button start_button;
     private Button messageButton;
     private Button listButton;
+    private Button setButton;
 
-    public static User user;
+    private User user;
     private SharedPreferences sharedPreferences;
     private SharedPrefManager sharedPrefManager;
 
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
         goal_update_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                promptDialog("Set Up New Goal", "Input your new goal here:");
+                promptDialog("Set Up New Goal", "Input your new goal here:", true);
             }
         });
         start_button=findViewById(R.id.start_button);
@@ -179,6 +180,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 switchToList();
+            }
+        });
+
+        setButton = (Button) findViewById( R.id.set_email );
+        setButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptDialog("Set Up User Email","Input your email address here:", false);
             }
         });
 
@@ -226,6 +235,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchToList(){
         Intent intent = new Intent( this, FriendListActivity.class);
+        intent.putExtra("email", user.getEmailAddress());
         startActivity(intent);
     }
 
@@ -357,7 +367,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /* function to show the dialog to prompt user to enter new goal */
-    private void promptDialog ( String title, String message ) {
+    private void promptDialog ( String title, String message, boolean isGoal ) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(title);
         builder.setMessage(message);
@@ -365,24 +375,33 @@ public class MainActivity extends AppCompatActivity {
         // Set up the input
         final EditText input = new EditText(this);
         // Specify the type of input as integer;
-        input.setInputType(InputType.TYPE_CLASS_NUMBER );
+        if( isGoal ) {
+            input.setInputType(InputType.TYPE_CLASS_NUMBER);
+        } else {
+            input.setInputType(InputType.TYPE_CLASS_TEXT);
+        }
         builder.setView(input);
 
         // Set up the positive button ("Yes" button)
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                int newGoalStep;
-                try {
-                    newGoalStep = Integer.parseInt(input.getText().toString());
+                if( isGoal ) {
+                    int newGoalStep;
+                    try {
+                        newGoalStep = Integer.parseInt(input.getText().toString());
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                        return;
+                    }
+                    user.setGoal(newGoalStep);
+                    setGoalContent(user.getGoal());
+                    setRemainingContent();
+                } else {
+                    String userEmail;
+                    userEmail = input.getText().toString();
+                    user.setEmailAddress(userEmail);
                 }
-                catch (NumberFormatException e){
-                    e.printStackTrace();
-                    return;
-                }
-                user.setGoal(newGoalStep);
-                setGoalContent(user.getGoal());
-                setRemainingContent();
             }
         });
 
