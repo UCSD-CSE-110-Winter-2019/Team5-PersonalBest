@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import edu.ucsd.cse110.personalbest.Managers.FireStoreManager;
 import edu.ucsd.cse110.personalbest.Managers.SharedPrefManager;
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
 import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
@@ -61,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     public static User user;
     private SharedPreferences sharedPreferences;
     private SharedPrefManager sharedPrefManager;
+    private FireStoreManager fireStoreManager;
 
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
@@ -190,8 +192,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
@@ -206,9 +206,11 @@ public class MainActivity extends AppCompatActivity {
 
         this.user = new User();
         this.sharedPreferences = getSharedPreferences("user_name",MODE_PRIVATE);
-        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences);
-        this.user.register(this.sharedPrefManager);
-        sharedPrefManager.retrieveData(this.user);
+        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
+        sharedPrefManager.retrieveData();
+
+        this.fireStoreManager = new FireStoreManager(this.user);
+        fireStoreManager.publishData();
 
         this.setGoalContent(this.user.getGoal());
         fitnessService.updateStepCount();
