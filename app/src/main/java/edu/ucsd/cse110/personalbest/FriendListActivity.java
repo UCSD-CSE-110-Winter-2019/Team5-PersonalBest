@@ -25,8 +25,8 @@ import java.util.Map;
 
 public class FriendListActivity extends AppCompatActivity {
     final String TAG = "FriendListActivity";
-    final String COLLECTION_KEY     = "Users";
-    final String REQ_KEY            = "Requested friends";
+    final String COLLECTION_KEY     = "users";
+    final String REQ_KEY            = "Request list";
     final String LIST_KEY           = "Friend list";
     final String REQ_EMAIL_KEY      = "Requested Email";
     final String FRIEND_EMAIL_KEY   = "Friend's Email";
@@ -66,6 +66,7 @@ public class FriendListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 promptDialog("Add new friend", "Enter your new friend's email:");
+                Log.d(TAG, "@@@@@@@@@@@@@@ EXit promptDialog @@@@@@@@@@@@@");
             }
         });
 
@@ -76,6 +77,8 @@ public class FriendListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        Log.d( TAG, "@@@@@@@@@@@ finished oncreate method @@@@@@@@@@");
     }
 
     private void promptDialog ( String title, String message ){
@@ -108,6 +111,7 @@ public class FriendListActivity extends AppCompatActivity {
 
                 } else {
                     requestFriend( inputEmail);
+                    Log.d(TAG, "@@@@@@@@@@@@ Exit request friend method @@@@@@@@@@@@");
                 }
 
             }
@@ -129,14 +133,14 @@ public class FriendListActivity extends AppCompatActivity {
 
         if( list.getId() == REQ_KEY ) {
             s = REQ_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@@@@@@@@@");
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@@@@@@@@@" + checkEmail);
         } else if ( list.getId() == LIST_KEY ) {
             s = FRIEND_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@@@@@");
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@@@@@" + checkEmail);
         }
 
-        System.out.println(list.getId());
-        System.out.println(s);
+//        System.out.println(list.getId());
+//        System.out.println(s);
 
         //Get the email in friend list
         list.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -145,12 +149,13 @@ public class FriendListActivity extends AppCompatActivity {
 
                 if (task.isSuccessful()){ //Find email in selfRequestList list
                     for (QueryDocumentSnapshot document : task.getResult()){
+                        Log.d(TAG, "checkEmail:" + checkEmail);
                         Log.d(TAG, document.getId() + " => " + document.getData());
 
-                        System.out.println(document.getString(s));
+                        Log.d(TAG, document.getString(s));
 
                         if(checkEmail.equals(document.getString( s ))) {
-                            Log.d(TAG,"@@@@@@@@@@@@ found same email return true @@@@@@@");
+                            Log.d(TAG,s+"@@@@@@@@@@@@ found same email return true @@@@@@@");
                             isList = true;
                             if( list.getId() == REQ_KEY ) {
                                 docID = document.getId();
@@ -183,12 +188,13 @@ public class FriendListActivity extends AppCompatActivity {
             Toast.makeText(FriendListActivity.this, "Successfully added!", Toast.LENGTH_LONG).show();
 
         } else {
+            Log.d(TAG, "@@@@@@@@@ Didn't add @@@@@@@@@@@");
             Map<String, String> req = new HashMap<>();
-            req.put( FRIEND_EMAIL_KEY, inputEmail );
+            req.put( REQ_EMAIL_KEY, inputEmail );
             selfRequestList.add(req);
 
             Toast.makeText(FriendListActivity.this, "Wait for approval", Toast.LENGTH_LONG).show();
-
+            Log.d(TAG, "@@@@@@@@@ Stop adding request @@@@@@@@@@@@");
         }
     }
 }
