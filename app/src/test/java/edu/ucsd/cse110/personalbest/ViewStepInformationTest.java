@@ -8,6 +8,9 @@ import org.robolectric.Robolectric;
 import org.robolectric.RobolectricTestRunner;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.google.firebase.FirebaseApp;
+
 import org.robolectric.RuntimeEnvironment;
 
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
