@@ -31,6 +31,8 @@ public class FriendListActivity extends AppCompatActivity {
     final String REQ_EMAIL_KEY      = "Requested Email";
     final String FRIEND_EMAIL_KEY   = "Friend's Email";
 
+    int count = 0;
+
     CollectionReference users;
     DocumentReference   selfDoc;
     CollectionReference selfRequestList;
@@ -130,15 +132,16 @@ public class FriendListActivity extends AppCompatActivity {
     }
 
     private boolean checkList ( CollectionReference list, String checkEmail ) {
+        count++;
         isList = false;
 
         if( list.getId() == REQ_KEY ) {
             s = REQ_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@@@@@@@@@" + checkEmail);
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@ "+count+" @ @@@@@@@@@@" + checkEmail);
             //System.out.println("@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@@@@@@@@@" + checkEmail);
         } else if ( list.getId() == LIST_KEY ) {
             s = FRIEND_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@@@@@" + checkEmail);
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@ "+ count +" @@@@@@@@@@" + checkEmail);
             //System.out.println("@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@@@@@" + checkEmail);
         }
 
@@ -149,18 +152,17 @@ public class FriendListActivity extends AppCompatActivity {
 
                 if (task.isSuccessful()){
                     for (QueryDocumentSnapshot document : task.getResult()){
-                        Log.d(TAG, "checkEmail:" + checkEmail);
+                        Log.d(TAG, "checkEmail:" + checkEmail + "@@@@@@ "+ count +" @@@@@@@");
                         Log.d(TAG, document.getId() + " => " + document.getData());
 
-                        Log.d(TAG, document.getString(s));
+                        Log.d(TAG, document.getString(s)+"@@@@@@ "+ count +" @@@@@@@");
 
                         if(checkEmail.equals(document.getString( s ))) {
-                            //System.out.println("@@@@@@@@@@@@ found  true @@@@@@@" +"@@@@@" + list.getParent().getId() + s + checkEmail);
                             isList = true;
                             if( list.getId() == REQ_KEY ) {
                                 docID = document.getId();
                             }
-                            Log.d(TAG,s+"@@@@@@@@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
+                            Log.d(TAG,s+"@@@@ "+ count +" @@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
                             break;
                         }
                     }
@@ -168,14 +170,15 @@ public class FriendListActivity extends AppCompatActivity {
             }
         });
 
-        Log.d(TAG, "finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
+        Log.d(TAG, "finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail +"@@@@@@ "+ count +" @@@@@@@");
         //System.out.println("finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
         return isList;
     }
 
     private void requestFriend ( ) {
         DocumentReference reqDoc;
-        if ( checkList( otherRequestList, userEmail ) ) {
+        boolean flag = checkList( otherRequestList, userEmail );
+        if (  flag ) {
             Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
 
             reqDoc = otherRequestList.document(docID);
