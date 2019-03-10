@@ -8,7 +8,7 @@ public class User implements ISubject<IUserObserver>{
 
     private Collection<IUserObserver> observers;
 
-    public String emailAddress;
+    private String emailAddress;
 
     private int goal;
     // Walk is object for the  total step
@@ -36,7 +36,7 @@ public class User implements ISubject<IUserObserver>{
     // User constrcutor
     User(){
         this.observers = new ArrayList<IUserObserver>();
-        this.emailAddress = "";
+        this.emailAddress = "default";
         this.goal = 0;
         this.curSteps = 0;
         this.curExercise = new Exercise();
@@ -46,7 +46,6 @@ public class User implements ISubject<IUserObserver>{
         return this.goal;
     }
 
-
     public int getCurSteps(){
         return this.curSteps;
     }
@@ -55,10 +54,8 @@ public class User implements ISubject<IUserObserver>{
         return curExercise;
     }
 
-    public String getEmailAddress() { return emailAddress; }
-
-    public void setEmailAddress( String email ) {
-        emailAddress = email;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
     public void setGoal(int goal){

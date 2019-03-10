@@ -20,7 +20,7 @@ public class FireStoreManager implements IUserObserver {
     User user;
     CollectionReference collectionReference;
     DocumentReference documentReference;
-    public static final String COLLECTION_KEY = "users";
+    public static final String COLLECTION_KEY = "Users";
     public static final String USER_GOAL_KEY = "userGoal";
     public static final String USER_WALK_KEY = "userWalk";
     public static final String USER_EXERCISE_KEY = "userExercise";
@@ -30,7 +30,7 @@ public class FireStoreManager implements IUserObserver {
         this.user = user;
         this.user.register(this);
         collectionReference = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
-        documentReference = collectionReference.document("abc@ucsd.edu");
+        documentReference = collectionReference.document(user.getEmailAddress());
     }
 
     @Override
@@ -50,7 +50,6 @@ public class FireStoreManager implements IUserObserver {
         Map<String, Integer> exercise_info = new HashMap<>();
         exercise_info.put(USER_EXERCISE_KEY, this.user.getCurExercise().getStep());
         this.documentReference.set(exercise_info, SetOptions.merge());
-        
     }
 
     public void retrieveData(){

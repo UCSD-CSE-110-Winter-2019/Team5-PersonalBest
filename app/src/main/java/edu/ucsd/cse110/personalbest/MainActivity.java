@@ -219,7 +219,6 @@ public class MainActivity extends AppCompatActivity {
         sharedPrefManager.retrieveData();
 
         this.fireStoreManager = new FireStoreManager(this.user);
-        fireStoreManager.publishData();
 
         this.setGoalContent(this.user.getGoal());
         fitnessService.updateStepCount();
