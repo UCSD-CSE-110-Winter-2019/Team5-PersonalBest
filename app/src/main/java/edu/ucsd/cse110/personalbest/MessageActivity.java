@@ -45,7 +45,9 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPreferences = getSharedPreferences("PersonalBest", Context.MODE_PRIVATE);
-        from = sharedPreferences.getString(FROM_KEY, null);
+        String emailAddress = getIntent().getStringExtra("email");
+        from = sharedPreferences.getString(FROM_KEY, emailAddress);
+
         setContentView(R.layout.activity_message);
         Button send = (Button) findViewById(R.id.btn_send);
         Button goBack = (Button) findViewById(R.id.go_back);
@@ -74,6 +76,24 @@ public class MessageActivity extends AppCompatActivity {
         findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
 
         subscribeToNotificationsTopic();
+
+        EditText nameView = findViewById((R.id.user_name));
+        nameView.setText(from);
+        nameView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                from = s.toString();
+                sharedPreferences.edit().putString(FROM_KEY, from).apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
 
     }
 
