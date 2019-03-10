@@ -234,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchToMessage(){
         Intent intent = new Intent(this, MessageActivity.class);
+        intent.putExtra("email", user.getEmailAddress());
         startActivity(intent);
     }
 
