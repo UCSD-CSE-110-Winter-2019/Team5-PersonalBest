@@ -38,7 +38,11 @@ public class FireStoreManager implements IUserObserver {
     }
 
     public void uploadData(){
-        documentReference = this.collectionReference.document(this.user.getEmailAddress());
+        if (this.user.getEmailAddress().equals("")) {
+            this.documentReference = this.collectionReference.document("default");
+        } else {
+            this.documentReference = this.collectionReference.document(this.user.getEmailAddress());
+        }
 
         Map<String, Integer> goal_info = new HashMap<>();
         goal_info.put(USER_GOAL_KEY, this.user.getGoal());
