@@ -57,6 +57,10 @@ public class User implements ISubject<IUserObserver>{
 
     public String getEmailAddress() { return emailAddress; }
 
+    public void setEmailAddress( String email ) {
+        emailAddress = email;
+    }
+
     public void setGoal(int goal){
         this.goal = goal;
         this.notifyObservers();
