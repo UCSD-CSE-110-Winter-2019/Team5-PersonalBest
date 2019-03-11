@@ -78,8 +78,21 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
             }
         });
 
+        Button friend1 = (Button) findViewById(R.id.friend1);
+        friend1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                switchToFriend();
+            }
+        });
         Log.d( TAG, "@@@@@@@@@@@ finished oncreate method @@@@@@@@@@");
 
+    }
+
+    private void switchToFriend(){
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("email", this.userEmail);
+        startActivity(intent);
     }
 
     private void promptDialog ( String title, String message ){
