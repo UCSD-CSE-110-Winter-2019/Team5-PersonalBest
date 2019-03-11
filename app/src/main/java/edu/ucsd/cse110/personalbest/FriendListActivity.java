@@ -27,7 +27,7 @@ import java.util.Map;
 public class FriendListActivity extends AppCompatActivity implements IcheckList{
     final String TAG = "FriendListActivity";
 
-    final String COLLECTION_KEY     = "sers";
+    final String COLLECTION_KEY     = "Users";
     final String REQ_KEY            = "Request list";
     final String LIST_KEY           = "Friend list";
     final String REQ_EMAIL_KEY      = "Requested Email";
@@ -66,7 +66,6 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
             @Override
             public void onClick(View v) {
                 promptDialog("Add new friend", "Enter your new friend's email:");
-                Log.d(TAG, "@@@@@@@@@@@@@@ EXit promptDialog @@@@@@@@@@@@@");
             }
         });
 
@@ -77,7 +76,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                 finish();
             }
         });
-
+      
         Button friend1 = (Button) findViewById(R.id.friend1);
         friend1.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -86,7 +85,6 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
             }
         });
         Log.d( TAG, "@@@@@@@@@@@ finished oncreate method @@@@@@@@@@");
-
     }
 
     private void switchToFriend(){
@@ -161,10 +159,10 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                             Log.d(TAG,s+"@@@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
 
                             if(list.getParent().getId() == inputEmail ) {
-                                check.requestFriend(isList);
+                                check.addFriend();
                             } else if( list.getParent().getId() == userEmail ) {
                                 if( list.getId() == LIST_KEY ) {
-                                    check.toast( "You have added this friend!");
+                                    check.toast("You have added this friend!");
                                 } else if( list.getId() == REQ_KEY ) {
                                     check.toast("You have requested!");
                                 }
@@ -173,38 +171,40 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                         }
                     }
                 }
+                if(!isList && list.getParent().getId() == inputEmail) {
+                    check.addRequest();
+                }
             }
         });
         Log.d(TAG, "finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail +"@@@@@@@@@@");
     }
 
-    public void requestFriend ( boolean flag ) {
+    public void addFriend ( ) {
         DocumentReference reqDoc;
-        if (  flag ) {
-            Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
 
-            reqDoc = otherRequestList.document(docID);
-            reqDoc.delete();
+        Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
 
-            Map<String, String> friend1 = new HashMap<>();
-            friend1.put( FRIEND_EMAIL_KEY, userEmail );
-            otherFriendList.add(friend1);
+        reqDoc = otherRequestList.document(docID);
+        reqDoc.delete();
 
-            Map<String, String> friend2 = new HashMap<>();
-            friend2.put( FRIEND_EMAIL_KEY, inputEmail );
-            selfFriendList.add(friend2);
+        Map<String, String> friend1 = new HashMap<>();
+        friend1.put( FRIEND_EMAIL_KEY, userEmail );
+        otherFriendList.add(friend1);
 
-            Toast.makeText(FriendListActivity.this, "Successfully added!", Toast.LENGTH_LONG).show();
+        Map<String, String> friend2 = new HashMap<>();
+        friend2.put( FRIEND_EMAIL_KEY, inputEmail );
+        selfFriendList.add(friend2);
 
-        } else {
-            Log.d(TAG, "@@@@@@@@@ Didn't add @@@@@@@@@@@");
-            Map<String, String> req = new HashMap<>();
-            req.put( REQ_EMAIL_KEY, inputEmail );
-            selfRequestList.add(req);
+        Toast.makeText(FriendListActivity.this, "Successfully added!", Toast.LENGTH_LONG).show();
 
-            Toast.makeText(FriendListActivity.this, "Wait for approval", Toast.LENGTH_LONG).show();
-            Log.d(TAG, "@@@@@@@@@ Stop adding request @@@@@@@@@@@@");
-        }
+    }
+    public void addRequest(){
+        Log.d(TAG, "@@@@@@@@@ Didn't add @@@@@@@@@@@");
+        Map<String, String> req = new HashMap<>();
+        req.put( REQ_EMAIL_KEY, inputEmail );
+        selfRequestList.add(req);
+
+        Toast.makeText(FriendListActivity.this, "Wait for approval", Toast.LENGTH_LONG).show();
     }
 
     public void toast ( String message ) {
