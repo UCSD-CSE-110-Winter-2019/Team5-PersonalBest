@@ -66,6 +66,7 @@ public class MessageActivity extends AppCompatActivity {
             }
         });*/
 
+
         chat = FirebaseFirestore.getInstance()
                 .collection(COLLECTION_KEY)
                 .document(DOCUMENT_KEY)
@@ -113,7 +114,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void initMessageUpdateListener() {
-        chat.orderBy(TIMESTAMP_KEY, Query.Direction.DESCENDING)
+        chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
                 .addSnapshotListener((newChatSnapShot, error) -> {
             if (error != null) {
                 Log.e(TAG, error.getLocalizedMessage());

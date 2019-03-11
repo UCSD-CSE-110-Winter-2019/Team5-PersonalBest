@@ -15,6 +15,11 @@
         android:fillViewport="true"
         android:overScrollMode="always">
 
+        <Button
+            android:id="@+id/test_friend"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="test_friend" />
     </ScrollView>
     <Button
         android:id="@+id/add_friend"
