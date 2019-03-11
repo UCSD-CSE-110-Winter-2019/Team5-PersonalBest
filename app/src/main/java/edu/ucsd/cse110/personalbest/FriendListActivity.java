@@ -2,6 +2,7 @@ package edu.ucsd.cse110.personalbest;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -78,6 +79,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
         });
 
         Log.d( TAG, "@@@@@@@@@@@ finished oncreate method @@@@@@@@@@");
+
     }
 
     private void promptDialog ( String title, String message ){

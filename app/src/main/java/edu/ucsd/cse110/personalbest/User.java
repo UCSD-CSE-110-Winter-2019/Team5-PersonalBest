@@ -1,14 +1,29 @@
 package edu.ucsd.cse110.personalbest;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 
 public class User implements ISubject<IUserObserver>{
     public static final int DAY_OF_MONTH = 30;
 
-    private String emailAddress;
+    private static final int MS_IN_DAY = 86400000;
 
     private Collection<IUserObserver> observers;
+
+    private String emailAddress;
+
+    private int goal;
+    // Walk is object for the  total step
+    private int totalSteps;
+    // Exercise is the object for the exercise part
+    private int exerciseSteps;
+    private Exercise curExercise;
+
+    private int currentDay;
+    private ArrayList<Integer> goalHistory;
+    private ArrayList<Integer> walkHistory;
+    private ArrayList<Integer> exerciseHistory;
 
     @Override
     public void register(IUserObserver observer) {
@@ -23,58 +38,89 @@ public class User implements ISubject<IUserObserver>{
     @Override
     public void notifyObservers() {
         for (IUserObserver observer : this.observers) {
-            observer.onDataChange(this);
+            observer.onDataChange();
         }
     }
-
-    //member variables
-    public static int trackLength=7; //The number of days we track a user
-    public static final int startingGoal=5000; //The starting goal of a new user
-    private int goal;
-    // Walk is object for the  total step
-    private int curSteps;
-    // Exercise is the object for the exercise part
-    private Exercise curExercise;
 
     // User constrcutor
     User(){
         this.observers = new ArrayList<IUserObserver>();
+        this.emailAddress = "default";
         this.goal = 0;
-        this.curSteps = 0;
+        this.totalSteps = 0;
         this.curExercise = new Exercise();
+        this.currentDay = (int)(Calendar.getInstance().getTimeInMillis() / MS_IN_DAY);
+        this.goalHistory = new ArrayList<>();
+        this.walkHistory = new ArrayList<>();
+        this.exerciseHistory = new ArrayList<>();
     }
 
-    public int getGoal(){
-        return this.goal;
+    public int getGoal() { return this.goal; }
+
+    public int getTotalSteps() { return this.totalSteps; }
+
+    public int getExerciseSteps() { return this.exerciseSteps; }
+
+    public Exercise getCurExercise() { return this.curExercise; }
+
+    public String getEmailAddress() { return this.emailAddress; }
+
+    public int getCurrentDay() { return this.currentDay; }
+
+    public ArrayList getGoalHistory() { return this.goalHistory; }
+
+    public ArrayList getWalkHistory() { return this.walkHistory; }
+
+    public ArrayList getExerciseHistory() { return this.exerciseHistory; }
+
+    public void compareCurrentDay(int currentDay) {
+        for (int i = 0; i < this.currentDay - currentDay; i++) {
+            this.goalHistory.add(0);
+            this.walkHistory.add(0);
+            this.exerciseHistory.add(0);
+        }
     }
 
-
-    public int getCurSteps(){
-        return this.curSteps;
-    }
-
-    public Exercise getCurExercise(){
-        return curExercise;
-    }
-
-    public String getEmailAddress() { return emailAddress; }
-
-    public void setEmailAddress( String email ) {
-        emailAddress = email;
-    }
-
-    public void setGoal(int goal){
+    public void setGoal(int goal, boolean notify){
         this.goal = goal;
-        this.notifyObservers();
+        if (this.goalHistory.size() > 0) {
+            this.goalHistory.set(goalHistory.size() - 1, goal);
+        }
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 
-    public void setCurSteps(int curSteps){
-        this.curSteps = curSteps;
-        this.notifyObservers();
+    public void setTotalSteps(int curSteps, boolean notify){
+        this.totalSteps = curSteps;
+        if (this.walkHistory.size() > 0) {
+            this.walkHistory.set(walkHistory.size() - 1, curSteps);
+        }
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 
-    public void setCurExercise(Exercise curExercise){
+    public void setExerciseSteps(int exerciseSteps, boolean notify) {
+        this.exerciseSteps = exerciseSteps;
+        if (this.walkHistory.size() > 0) {
+            int previous_exercies = this.exerciseHistory.get(exerciseHistory.size() - 1);
+            this.exerciseHistory.set(exerciseHistory.size() - 1, previous_exercies + exerciseSteps);
+        }
+        if (notify) {
+            this.notifyObservers();
+        }
+    }
+
+    public void setCurExercise(Exercise curExercise, boolean notify){
         this.curExercise = curExercise;
-        this.notifyObservers();
     }
+
+    public void setEmailAddress(String emailAddress, boolean notify) {
+        this.emailAddress = emailAddress;
+        if (notify) {
+            this.notifyObservers();
+        }
+    }
+
 }

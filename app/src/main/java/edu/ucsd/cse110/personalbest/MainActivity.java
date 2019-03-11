@@ -19,7 +19,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
+import edu.ucsd.cse110.personalbest.Managers.FireStoreManager;
 import edu.ucsd.cse110.personalbest.Managers.SharedPrefManager;
 import edu.ucsd.cse110.personalbest.fitness.FitnessService;
 import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
     private User user;
     private SharedPreferences sharedPreferences;
     private SharedPrefManager sharedPrefManager;
+    private FireStoreManager fireStoreManager;
 
     private boolean isSet = false;
 
@@ -77,8 +78,8 @@ public class MainActivity extends AppCompatActivity {
             final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
             fitnessService.updateStepCount();
             // create new intentional walk object
-            user.setCurExercise(new Exercise(currentTime));
-            int start_step = user.getCurSteps();
+            user.setCurExercise(new Exercise(currentTime), true);
+            int start_step = user.getTotalSteps();
 
             // while walking
             while (state == 1){
@@ -89,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
                     fitnessService.updateStepCount();
 
                     // set the steps and time
-                    user.getCurExercise().setStep(user.getCurSteps() - start_step);
+                    user.getCurExercise().setStep(user.getTotalSteps() - start_step);
                     user.getCurExercise().setTime(Calendar.getInstance().getTimeInMillis() / 1000);
 
                     // allocate stats into corresponding slot
@@ -116,10 +117,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            SharedPreferences sharedPreferences=getSharedPreferences("user_name", MODE_PRIVATE);
-            SharedPreferences.Editor editor=sharedPreferences.edit();
-            editor.putInt("" + user.getCurExercise().getTimeStart(), 100);
-            editor.commit();
+            user.setExerciseSteps(user.getCurExercise().getStep(), true);
         }
     }
 
@@ -136,10 +134,19 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        this.user = new User();
+        this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
+        sharedPrefManager.retrieveData();
+        sharedPrefManager.publishData();
+
         // When running test, change service key to TEST_SERVICE
         if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
             fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
+        } else {
+            this.fireStoreManager = new FireStoreManager(this.user);
         }
+
         fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
 
         // Initial setup for google fit service
@@ -208,8 +215,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         // get current walking stats including goal, steps completed and step remaining
         goal_content = findViewById(R.id.goal_content);
         complete_content = findViewById(R.id.complete_content);
@@ -222,12 +227,6 @@ public class MainActivity extends AppCompatActivity {
         exercise_speed_label = findViewById(R.id.exercise_speed_label);
         exercise_step_label = findViewById(R.id.exercise_step_label);
 
-        this.user = new User();
-        this.sharedPreferences = getSharedPreferences("user_name",MODE_PRIVATE);
-        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences);
-        this.user.register(this.sharedPrefManager);
-        sharedPrefManager.retrieveData(this.user);
-
         this.setGoalContent(this.user.getGoal());
         fitnessService.updateStepCount();
 
@@ -239,6 +238,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void switchToMessage(){
         Intent intent = new Intent(this, MessageActivity.class);
+        intent.putExtra("email", user.getEmailAddress());
         startActivity(intent);
     }
 
@@ -294,12 +294,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setCompleteContent(int stepCount) {
-        this.user.setCurSteps(stepCount);
+        this.user.setTotalSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
+
+        int size = this.user.getWalkHistory().size();
+        if ( size > 1) {
+            if (this.user.getTotalSteps() - (int)this.user.getWalkHistory().get(size - 2) == 500) {
+                Toast.makeText(this, "Congratulations! You have improved 500 steps!", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public void setRemainingContent() {
-        int remaining = this.user.getGoal() - this.user.getCurSteps();
+        int remaining = this.user.getGoal() - this.user.getTotalSteps();
         if(remaining > 0){
             remaining_content.setText(String.valueOf(remaining));
         }
@@ -403,13 +410,14 @@ public class MainActivity extends AppCompatActivity {
                         e.printStackTrace();
                         return;
                     }
-                    user.setGoal(newGoalStep);
+                    user.setGoal(newGoalStep, true);
                     setGoalContent(user.getGoal());
                     setRemainingContent();
                 } else {
                     String userEmail;
                     userEmail = input.getText().toString();
-                    user.setEmailAddress(userEmail);
+
+                    user.setEmailAddress(userEmail, true);
                     Toast.makeText(MainActivity.this, "Successfully set up the email! You can add friend now.", Toast.LENGTH_LONG).show();
                 }
             }
@@ -431,7 +439,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        fitnessService.updateStepCount();
+        // fitnessService.updateStepCount();
         // setBarChart();
     }
 }

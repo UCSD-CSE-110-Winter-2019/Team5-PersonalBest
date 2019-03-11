@@ -7,6 +7,8 @@ import android.os.Bundle;
 //import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -17,6 +19,7 @@ import android.widget.Toast;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
@@ -42,7 +45,9 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPreferences = getSharedPreferences("PersonalBest", Context.MODE_PRIVATE);
-        from = sharedPreferences.getString(FROM_KEY, null);
+        String emailAddress = getIntent().getStringExtra("email");
+        from = sharedPreferences.getString(FROM_KEY, emailAddress);
+
         setContentView(R.layout.activity_message);
         Button send = (Button) findViewById(R.id.btn_send);
         Button goBack = (Button) findViewById(R.id.go_back);
@@ -72,6 +77,24 @@ public class MessageActivity extends AppCompatActivity {
 
         subscribeToNotificationsTopic();
 
+        EditText nameView = findViewById((R.id.user_name));
+        nameView.setText(from);
+        nameView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                from = s.toString();
+                sharedPreferences.edit().putString(FROM_KEY, from).apply();
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+            }
+        });
+
     }
 
     private void sendMessage(){
@@ -90,7 +113,8 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void initMessageUpdateListener() {
-        chat.addSnapshotListener((newChatSnapShot, error) -> {
+        chat.orderBy(TIMESTAMP_KEY, Query.Direction.DESCENDING)
+                .addSnapshotListener((newChatSnapShot, error) -> {
             if (error != null) {
                 Log.e(TAG, error.getLocalizedMessage());
                 return;
