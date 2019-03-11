@@ -2,6 +2,7 @@ package edu.ucsd.cse110.personalbest;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -83,6 +84,21 @@ public class FriendListActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        Button friend1 = (Button) findViewById(R.id.friend1);
+        friend1.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                switchToFriend();
+            }
+        });
+
+    }
+
+    private void switchToFriend(){
+        Intent intent = new Intent( this, ProfileActivity.class);
+        intent.putExtra("email", userEmail);
+        startActivity(intent);
     }
 
     private void promptDialog ( String title, String message ){
