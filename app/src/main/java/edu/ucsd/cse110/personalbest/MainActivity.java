@@ -77,7 +77,7 @@ public class MainActivity extends AppCompatActivity {
             fitnessService.updateStepCount();
             // create new intentional walk object
             user.setCurExercise(new Exercise(currentTime), true);
-            int start_step = user.getCurSteps();
+            int start_step = user.getTotalSteps();
 
             // while walking
             while (state == 1){
@@ -88,7 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     fitnessService.updateStepCount();
 
                     // set the steps and time
-                    user.getCurExercise().setStep(user.getCurSteps() - start_step);
+                    user.getCurExercise().setStep(user.getTotalSteps() - start_step);
                     user.getCurExercise().setTime(Calendar.getInstance().getTimeInMillis() / 1000);
 
                     // allocate stats into corresponding slot
@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
+            user.setExerciseSteps(user.getCurExercise().getStep(), true);
         }
     }
 
@@ -284,19 +285,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void setCompleteContent(int stepCount) {
-        this.user.setCurSteps(stepCount, true);
+        this.user.setTotalSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
 
         int size = this.user.getWalkHistory().size();
         if ( size > 1) {
-            if (this.user.getCurSteps() - (int)this.user.getWalkHistory().get(size - 2) == 500) {
+            if (this.user.getTotalSteps() - (int)this.user.getWalkHistory().get(size - 2) == 500) {
                 Toast.makeText(this, "Congratulations! You have improved 500 steps!", Toast.LENGTH_LONG).show();
             }
         }
     }
 
     public void setRemainingContent() {
-        int remaining = this.user.getGoal() - this.user.getCurSteps();
+        int remaining = this.user.getGoal() - this.user.getTotalSteps();
         if(remaining > 0){
             remaining_content.setText(String.valueOf(remaining));
         }

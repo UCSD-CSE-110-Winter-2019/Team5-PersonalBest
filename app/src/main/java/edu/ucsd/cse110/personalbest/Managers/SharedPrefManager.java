@@ -36,7 +36,7 @@ public class SharedPrefManager implements IUserObserver {
     public void publishData(){
         editor.putInt(USER_GOAL_KEY, this.user.getGoal());
         editor.putInt(USER_EXERCISE_KEY, this.user.getCurExercise().getStep());
-        editor.putInt(USER_WALK_KEY, this.user.getCurSteps());
+        editor.putInt(USER_WALK_KEY, this.user.getTotalSteps());
         editor.putString(USER_EMAIL_KEY, this.user.getEmailAddress());
         editor.putInt(DAY_KEY, this.user.getCurrentDay());
 
@@ -50,7 +50,7 @@ public class SharedPrefManager implements IUserObserver {
 
         Log.i("SharedPrefManager Set Goal", this.user.getGoal() + "");
         Log.i("SharedPrefManager Set Exer", this.user.getCurExercise().getStep() + "");
-        Log.i("SharedPrefManager Set Walk", this.user.getCurSteps() + "");
+        Log.i("SharedPrefManager Set Walk", this.user.getTotalSteps() + "");
         Log.i("SharedPrefManager Set CurDay", this.user.getCurrentDay() + "");
         Log.i("SharedPrefManager Set Email", this.user.getEmailAddress() + "");
         Log.i("SharedPrefManager Set Size", this.user.getGoalHistory().size() + "");
@@ -59,7 +59,7 @@ public class SharedPrefManager implements IUserObserver {
 
     public void retrieveData(){
         this.user.setGoal(sharedPreferences.getInt(USER_GOAL_KEY,5000), false);
-        this.user.setCurSteps(sharedPreferences.getInt(USER_WALK_KEY,0), false);
+        this.user.setTotalSteps(sharedPreferences.getInt(USER_WALK_KEY,0), false);
         this.user.setCurExercise(new Exercise(sharedPreferences.getInt(USER_EXERCISE_KEY,0)), false);
         this.user.setEmailAddress(sharedPreferences.getString(USER_EMAIL_KEY, ""), false);
 

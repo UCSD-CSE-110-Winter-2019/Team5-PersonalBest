@@ -1,7 +1,13 @@
 package edu.ucsd.cse110.personalbest.Managers;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
@@ -13,6 +19,8 @@ import edu.ucsd.cse110.personalbest.IUserObserver;
 import edu.ucsd.cse110.personalbest.User;
 
 public class FireStoreManager implements IUserObserver {
+    public static final String TAG = "FireStoreManager";
+
     User user;
     CollectionReference collectionReference;
     DocumentReference documentReference;
@@ -49,7 +57,7 @@ public class FireStoreManager implements IUserObserver {
         this.documentReference.set(goal_info, SetOptions.merge());
 
         Map<String, Integer> step_info = new HashMap<>();
-        step_info.put(USER_WALK_KEY, this.user.getCurSteps());
+        step_info.put(USER_WALK_KEY, this.user.getTotalSteps());
         this.documentReference.set(step_info, SetOptions.merge());
 
         Map<String, Integer> exercise_info = new HashMap<>();
@@ -67,6 +75,25 @@ public class FireStoreManager implements IUserObserver {
         Map<String, ArrayList> exercise_history_info = new HashMap<>();
         exercise_history_info.put(EXERCISE_HISTORY_KEY, this.user.getExerciseHistory());
         this.documentReference.set(exercise_history_info, SetOptions.merge());
+
+        /*
+        this.documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot document = task.getResult();
+                    if (document.exists()) {
+                        Log.d(TAG, "DocumentSnapshot data: " + document.getData());
+                    } else {
+                        Log.d(TAG, "No such document");
+                    }
+                } else {
+                    Log.d(TAG, "get failed with ", task.getException());
+                }
+            }
+        });
+        */
+
     }
 
 }
