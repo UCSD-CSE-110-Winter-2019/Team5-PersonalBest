@@ -286,6 +286,13 @@ public class MainActivity extends AppCompatActivity {
     public void setCompleteContent(int stepCount) {
         this.user.setCurSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
+
+        int size = this.user.getWalkHistory().size();
+        if ( size > 1) {
+            if (this.user.getCurSteps() - (int)this.user.getWalkHistory().get(size - 2) == 500) {
+                Toast.makeText(this, "Congratulations! You have improved 500 steps!", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
     public void setRemainingContent() {
