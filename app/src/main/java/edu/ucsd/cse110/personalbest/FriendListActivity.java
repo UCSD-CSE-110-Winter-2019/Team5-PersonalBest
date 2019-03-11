@@ -23,15 +23,14 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FriendListActivity extends AppCompatActivity {
+public class FriendListActivity extends AppCompatActivity implements IcheckList{
     final String TAG = "FriendListActivity";
-    final String COLLECTION_KEY     = "users";
+
+    final String COLLECTION_KEY     = "sers";
     final String REQ_KEY            = "Request list";
     final String LIST_KEY           = "Friend list";
     final String REQ_EMAIL_KEY      = "Requested Email";
     final String FRIEND_EMAIL_KEY   = "Friend's Email";
-
-    int count = 0;
 
     CollectionReference users;
     DocumentReference   selfDoc;
@@ -42,8 +41,6 @@ public class FriendListActivity extends AppCompatActivity {
     CollectionReference otherRequestList;
     CollectionReference otherFriendList;
 
-    String tmpStringFriend  = "xig113@ucsd.edu";//For test
-    String tmpStringRequest = "ziw330@ucsd.edu";//For test
     String inputEmail;
     String s;
     String userEmail;
@@ -88,13 +85,10 @@ public class FriendListActivity extends AppCompatActivity {
         builder.setTitle(title);
         builder.setMessage(message);
 
-        // Set up the input
         final EditText input = new EditText(this);
-        // Specify the type of input as integer;
         input.setInputType(InputType.TYPE_CLASS_TEXT );
         builder.setView(input);
 
-        // Set up the positive button ("Yes" button)
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -105,21 +99,14 @@ public class FriendListActivity extends AppCompatActivity {
                 otherRequestList = otherDoc.collection(REQ_KEY);
                 otherFriendList = otherDoc.collection(LIST_KEY);
 
-                if( checkList( selfFriendList, inputEmail ) ) {
-                    Toast.makeText(FriendListActivity.this, "You have added this friend!", Toast.LENGTH_LONG).show();
+                checkList( selfFriendList, inputEmail, FriendListActivity.this );
+                checkList( selfRequestList, inputEmail, FriendListActivity.this );
 
-                } else if( checkList( selfRequestList, inputEmail ) ) {
-                    Toast.makeText(FriendListActivity.this, "You have requested!", Toast.LENGTH_LONG).show();
-
-                } else {
-                    requestFriend();
-                    Log.d(TAG, "@@@@@@@@@@@@ Exit request friend method @@@@@@@@@@@@");
-                }
+                checkList( otherRequestList, userEmail, FriendListActivity.this );
 
             }
         });
 
-        // set the negative button ("No" button)
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -127,57 +114,57 @@ public class FriendListActivity extends AppCompatActivity {
             }
         });
 
-        // show the dialog
         builder.show();
     }
 
-    private boolean checkList ( CollectionReference list, String checkEmail ) {
-        count++;
+    private void checkList ( CollectionReference list, String checkEmail, IcheckList check ) {
         isList = false;
 
         if( list.getId() == REQ_KEY ) {
             s = REQ_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@ "+count+" @ @@@@@@@@@@" + checkEmail);
-            //System.out.println("@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@@@@@@@@@" + checkEmail);
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@" + checkEmail);
         } else if ( list.getId() == LIST_KEY ) {
             s = FRIEND_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@ "+ count +" @@@@@@@@@@" + checkEmail);
-            //System.out.println("@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@@@@@" + checkEmail);
+            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@" + checkEmail);
         }
 
-        //Get the email in friend list
         list.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if (task.isSuccessful()){
                     for (QueryDocumentSnapshot document : task.getResult()){
-                        Log.d(TAG, "checkEmail:" + checkEmail + "@@@@@@ "+ count +" @@@@@@@");
+                        Log.d(TAG, "checkEmail:" + checkEmail + "@@@@@@@@@@@@");
                         Log.d(TAG, document.getId() + " => " + document.getData());
-
-                        Log.d(TAG, document.getString(s)+"@@@@@@ "+ count +" @@@@@@@");
+                        Log.d(TAG, document.getString(s)+"@@@@@@@@@@@@");
 
                         if(checkEmail.equals(document.getString( s ))) {
                             isList = true;
                             if( list.getId() == REQ_KEY ) {
                                 docID = document.getId();
                             }
-                            Log.d(TAG,s+"@@@@ "+ count +" @@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
+                            Log.d(TAG,s+"@@@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
+
+                            if(list.getParent().getId() == inputEmail ) {
+                                check.requestFriend(isList);
+                            } else if( list.getParent().getId() == userEmail ) {
+                                if( list.getId() == LIST_KEY ) {
+                                    check.toast( "You have added this friend!");
+                                } else if( list.getId() == REQ_KEY ) {
+                                    check.toast("You have requested!");
+                                }
+                            }
                             break;
                         }
                     }
                 }
             }
         });
-
-        Log.d(TAG, "finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail +"@@@@@@ "+ count +" @@@@@@@");
-        //System.out.println("finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
-        return isList;
+        Log.d(TAG, "finish check list method" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail +"@@@@@@@@@@");
     }
 
-    private void requestFriend ( ) {
+    public void requestFriend ( boolean flag ) {
         DocumentReference reqDoc;
-        boolean flag = checkList( otherRequestList, userEmail );
         if (  flag ) {
             Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
 
@@ -203,5 +190,9 @@ public class FriendListActivity extends AppCompatActivity {
             Toast.makeText(FriendListActivity.this, "Wait for approval", Toast.LENGTH_LONG).show();
             Log.d(TAG, "@@@@@@@@@ Stop adding request @@@@@@@@@@@@");
         }
+    }
+
+    public void toast ( String message ) {
+        Toast.makeText(FriendListActivity.this, message, Toast.LENGTH_LONG).show();
     }
 }
