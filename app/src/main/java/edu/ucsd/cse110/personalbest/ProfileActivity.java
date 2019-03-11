@@ -1,11 +1,13 @@
 package edu.ucsd.cse110.personalbest;
 
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,6 +24,8 @@ import java.util.Map;
 public class ProfileActivity extends AppCompatActivity {
     public static final String TAG = "ProfileActivity";
     public static final String COLLECTION_KEY = "Users";
+
+    TextView friend_name;
 
     String userEmail;
     DocumentReference documentReference;
@@ -45,6 +49,23 @@ public class ProfileActivity extends AppCompatActivity {
                 finish();
             }
         });
+
+        friend_name = findViewById(R.id.name_label);
+
+        Button message_button = (Button) findViewById(R.id.friend_message_button);
+        message_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                switchToMessage();
+            }
+        });
+    }
+
+    private void switchToMessage(){
+        Intent intent = new Intent(this, MessageActivity.class);
+        intent.putExtra("user_email", this.userEmail);
+        intent.putExtra("friend_email", friend_name.getText());
+        startActivity(intent);
     }
 
     public void getData() {

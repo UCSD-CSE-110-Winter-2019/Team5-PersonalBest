@@ -31,8 +31,11 @@ public class MessageActivity extends AppCompatActivity {
 
     String TAG = MainActivity.class.getSimpleName();
 
+    String user_email;
+    String friend_email;
+
     String COLLECTION_KEY = "chats";
-    String DOCUMENT_KEY = "chat1";
+    String DOCUMENT_KEY;
     String MESSAGES_KEY = "messages";
     String FROM_KEY = "from";
     String TEXT_KEY = "text";
@@ -45,8 +48,16 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPreferences = getSharedPreferences("PersonalBest", Context.MODE_PRIVATE);
-        String emailAddress = getIntent().getStringExtra("email");
-        from = sharedPreferences.getString(FROM_KEY, emailAddress);
+        this.user_email = getIntent().getStringExtra("user_email");
+        this.friend_email = getIntent().getStringExtra("friend_email");
+
+        from = sharedPreferences.getString(FROM_KEY, user_email);
+
+        if (user_email.compareTo(friend_email) >= 0) {
+            DOCUMENT_KEY = user_email + "~" + friend_email;
+        } else {
+            DOCUMENT_KEY = friend_email + "~" + user_email;
+        }
 
         setContentView(R.layout.activity_message);
         Button send = (Button) findViewById(R.id.btn_send);
@@ -113,7 +124,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void initMessageUpdateListener() {
-        chat.orderBy(TIMESTAMP_KEY, Query.Direction.DESCENDING)
+        chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
                 .addSnapshotListener((newChatSnapShot, error) -> {
             if (error != null) {
                 Log.e(TAG, error.getLocalizedMessage());
