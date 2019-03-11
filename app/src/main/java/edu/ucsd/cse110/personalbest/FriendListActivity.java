@@ -112,10 +112,10 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                 otherRequestList = otherDoc.collection(REQ_KEY);
                 otherFriendList = otherDoc.collection(LIST_KEY);
 
+                if( inputEmail == userEmail ) {
+                    toast("You couldn't add yourself!");
+                }
                 checkList( selfFriendList, inputEmail, FriendListActivity.this );
-                checkList( selfRequestList, inputEmail, FriendListActivity.this );
-
-                checkList( otherRequestList, userEmail, FriendListActivity.this );
 
             }
         });
@@ -169,6 +169,13 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                             }
                             break;
                         }
+                    }
+                }
+                if(!isList && list.getParent().getId() == userEmail ) {
+                    if(list.getId() == LIST_KEY) {
+                        checkList( selfRequestList, inputEmail, FriendListActivity.this );
+                    } else if(list.getId() == REQ_KEY) {
+                        checkList(otherRequestList, userEmail, FriendListActivity.this);
                     }
                 }
                 if(!isList && list.getParent().getId() == inputEmail) {
