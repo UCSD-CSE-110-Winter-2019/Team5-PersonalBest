@@ -6,6 +6,7 @@ import java.util.Collection;
 
 public class User implements ISubject<IUserObserver>{
     public static final int DAY_OF_MONTH = 30;
+
     private static final int MS_IN_DAY = 86400000;
 
     private Collection<IUserObserver> observers;

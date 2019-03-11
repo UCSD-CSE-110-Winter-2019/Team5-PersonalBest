@@ -64,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     private SharedPrefManager sharedPrefManager;
     private FireStoreManager fireStoreManager;
 
+    private boolean isSet = false;
+
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
@@ -186,7 +188,13 @@ public class MainActivity extends AppCompatActivity {
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switchToList();
+                if( !isSet ) {
+                    Toast.makeText(MainActivity.this, "You haven't set up email", Toast.LENGTH_LONG).show();
+                    promptDialog("Set Up User Email","Input your email address here:", false);
+                    isSet = true;
+                } else {
+                    switchToList();
+                }
             }
         });
 
@@ -195,6 +203,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 promptDialog("Set Up User Email","Input your email address here:", false);
+                isSet = true;
             }
         });
 
@@ -407,7 +416,9 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     String userEmail;
                     userEmail = input.getText().toString();
+
                     user.setEmailAddress(userEmail, true);
+                    Toast.makeText(MainActivity.this, "Successfully set up the email! You can add friend now.", Toast.LENGTH_LONG).show();
                 }
             }
         });
