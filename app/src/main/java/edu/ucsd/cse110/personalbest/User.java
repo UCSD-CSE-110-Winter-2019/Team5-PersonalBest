@@ -123,4 +123,9 @@ public class User implements ISubject<IUserObserver>{
         }
     }
 
+    // For testing purpose
+    public void setWalkHistory (ArrayList<Integer> walkHistory) {
+        this.walkHistory = walkHistory;
+    }
+
 }

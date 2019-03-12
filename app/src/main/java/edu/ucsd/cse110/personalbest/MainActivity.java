@@ -287,11 +287,16 @@ public class MainActivity extends AppCompatActivity {
     public void setCompleteContent(int stepCount) {
         this.user.setTotalSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
+        displayEncouragement();
+    }
 
+    public void displayEncouragement() {
         int size = this.user.getWalkHistory().size();
+        // Check whether there is data from yesterday
         if ( size > 1) {
-            if (this.user.getTotalSteps() - (int)this.user.getWalkHistory().get(size - 2) == 500) {
-                Toast.makeText(this, "Congratulations! You have improved 500 steps!", Toast.LENGTH_LONG).show();
+            int improvement = this.user.getTotalSteps() - (int)this.user.getWalkHistory().get(size - 2);
+            if (improvement != 0 && improvement % 500 == 0) {
+                Toast.makeText(this, "Congratulations! You have improved " + improvement + " steps!", Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -430,7 +435,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // fitnessService.updateStepCount();
+        fitnessService.updateStepCount();
         // setBarChart();
+    }
+
+    public User getUser() {
+        return this.user;
     }
 }
