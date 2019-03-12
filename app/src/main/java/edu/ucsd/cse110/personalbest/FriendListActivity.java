@@ -46,6 +46,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
     String s;
     String userEmail;
     String docID;
+    String friend_email;
 
     private boolean isList;
 
@@ -54,7 +55,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friend_list);
 
-        userEmail = getIntent().getSerializableExtra("email").toString();
+        userEmail = getIntent().getSerializableExtra("user_email").toString();
 
         users = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
         if (userEmail.equals("")) {
@@ -85,6 +86,16 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
         friend1.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                friend_email = friend1.getText().toString();
+                switchToFriend();
+            }
+        });
+
+        Button friend2 = (Button) findViewById(R.id.friend2);
+        friend2.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                friend_email = friend2.getText().toString();
                 switchToFriend();
             }
         });
@@ -93,7 +104,8 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
 
     private void switchToFriend(){
         Intent intent = new Intent(this, ProfileActivity.class);
-        intent.putExtra("email", this.userEmail);
+        intent.putExtra("user_email", this.userEmail);
+        intent.putExtra("friend_email", this.friend_email);
         startActivity(intent);
     }
 
