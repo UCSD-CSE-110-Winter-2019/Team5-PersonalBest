@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
-    private static final String TAG = "StepCountActivity";
+    private static final String TAG = "MainActivity";
     private static final long MS_IN_DAY = 86400000;
     // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
@@ -51,13 +51,12 @@ public class MainActivity extends AppCompatActivity {
     private TextView exercise_time_content;
     private TextView exercise_speed_content;
 
-    private Button update_button;
-    private Button goal_update_button;
+    private Button update_step_button;
+    private Button update_goal_button;
     private Button walk_history_button;
     private Button start_button;
-    private Button messageButton;
-    private Button listButton;
-    private Button setButton;
+    private Button friend_list_button;
+    private Button set_email_button;
 
     private User user;
     private SharedPreferences sharedPreferences;
@@ -67,6 +66,109 @@ public class MainActivity extends AppCompatActivity {
     public int[] weekSteps = new int[7];
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
+
+    // using google fit api
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
+            @Override
+            public FitnessService create(MainActivity mainActivity) {
+                return new GoogleFitAdapter(mainActivity);
+            }
+        });
+
+        this.user = new User();
+        this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
+        sharedPrefManager.retrieveData();
+        sharedPrefManager.publishData();
+
+        // When running test, change service key to TEST_SERVICE
+        if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
+            fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
+        } else {
+            this.fireStoreManager = new FireStoreManager(this.user);
+        }
+
+        fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
+
+        // Initial setup for google fit service
+        fitnessService.setup();
+
+        // Click on the update button will update steps count
+        update_step_button = findViewById(R.id.update_button);
+        update_step_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fitnessService.updateStepCount();
+                // setBarChart();
+            }
+        });
+
+        // manually chang the goal
+        update_goal_button = findViewById(R.id.goal_update_button);
+        update_goal_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptDialog("Set Up New Goal", "Input your new goal here:", true);
+            }
+        });
+
+        start_button = findViewById(R.id.start_button);
+        start_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchState(v);
+            }
+        });
+
+        friend_list_button = (Button) findViewById(R.id.friend_list_button);
+        friend_list_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchToFriendList();
+            }
+        });
+
+        set_email_button = (Button) findViewById( R.id.set_email_button);
+        set_email_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                promptDialog("Set Up User Email","Input your email address here:", false);
+            }
+        });
+
+        walk_history_button = (Button) findViewById(R.id.run_history_button);
+        walk_history_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                showBarChart(view);
+            }
+        });
+
+        // get current walking stats including goal, steps completed and step remaining
+        goal_content = findViewById(R.id.goal_content);
+        complete_content = findViewById(R.id.complete_content);
+        remaining_content = findViewById(R.id.remaining_content);
+        exercise_time_content = findViewById(R.id.exercise_time_content);
+        exercise_speed_content = findViewById(R.id.exercise_speed_content);
+        exercise_step_content = findViewById(R.id.exercise_step_content);
+        exercise_label = findViewById(R.id.exercise_label);
+        exercise_time_label = findViewById(R.id.exercise_time_label);
+        exercise_speed_label = findViewById(R.id.exercise_speed_label);
+        exercise_step_label = findViewById(R.id.exercise_step_label);
+
+        this.setGoalContent(this.user.getGoal());
+        fitnessService.updateStepCount();
+
+        // when not in intentional walk mode
+        if(state == 0) {
+            setExerciseVisibility(View.INVISIBLE);
+        }
+    }
 
     /* keep track of stats when the app is running in background */
     private class walkUpdateTask extends AsyncTask<String,String,String>{
@@ -119,123 +221,9 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // using google fit api
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        FitnessServiceFactory.put(fitnessServiceKey, new FitnessServiceFactory.BluePrint() {
-            @Override
-            public FitnessService create(MainActivity mainActivity) {
-                return new GoogleFitAdapter(mainActivity);
-            }
-        });
-
-        this.user = new User();
-        this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
-        this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
-        sharedPrefManager.retrieveData();
-        sharedPrefManager.publishData();
-
-        // When running test, change service key to TEST_SERVICE
-        if (getIntent().getStringExtra(FITNESS_SERVICE_KEY) != null) {
-            fitnessServiceKey = getIntent().getStringExtra(FITNESS_SERVICE_KEY);
-        } else {
-            this.fireStoreManager = new FireStoreManager(this.user);
-        }
-
-        fitnessService = FitnessServiceFactory.create(fitnessServiceKey, this);
-
-        // Initial setup for google fit service
-        fitnessService.setup();
-
-        // Click on the update button will update steps count
-        update_button = findViewById(R.id.update_button);
-        update_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                fitnessService.updateStepCount();
-                // setBarChart();
-            }
-        });
-        // manually chang the goal
-        goal_update_button = findViewById(R.id.goal_update_button);
-        goal_update_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                promptDialog("Set Up New Goal", "Input your new goal here:", true);
-            }
-        });
-        start_button=findViewById(R.id.start_button);
-        start_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchState(v);
-            }
-        });
-        messageButton = (Button) findViewById(R.id.message_button);
-        messageButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                switchToMessage();
-            }
-        });
-
-        listButton = (Button) findViewById(R.id.friend_list);
-        listButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switchToList();
-            }
-        });
-
-        setButton = (Button) findViewById( R.id.set_email );
-        setButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                promptDialog("Set Up User Email","Input your email address here:", false);
-            }
-        });
-
-        walk_history_button = (Button) findViewById(R.id.run_history_button);
-        walk_history_button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                showBarChart(view);
-            }
-        });
-
-        // get current walking stats including goal, steps completed and step remaining
-        goal_content = findViewById(R.id.goal_content);
-        complete_content = findViewById(R.id.complete_content);
-        remaining_content = findViewById(R.id.remaining_content);
-        exercise_time_content = findViewById(R.id.exercise_time_content);
-        exercise_speed_content = findViewById(R.id.exercise_speed_content);
-        exercise_step_content = findViewById(R.id.exercise_step_content);
-        exercise_label = findViewById(R.id.exercise_label);
-        exercise_time_label = findViewById(R.id.exercise_time_label);
-        exercise_speed_label = findViewById(R.id.exercise_speed_label);
-        exercise_step_label = findViewById(R.id.exercise_step_label);
-
-        this.setGoalContent(this.user.getGoal());
-        fitnessService.updateStepCount();
-
-        // when not in intentional walk mode
-        if(state == 0) {
-            setExerciseVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void switchToMessage(){
-        Intent intent = new Intent(this, MessageActivity.class);
-        intent.putExtra("email", user.getEmailAddress());
-        startActivity(intent);
-    }
-
-    private void switchToList(){
+    private void switchToFriendList(){
         Intent intent = new Intent( this, FriendListActivity.class);
-        intent.putExtra("email", user.getEmailAddress());
+        intent.putExtra("user_email", user.getEmailAddress());
         startActivity(intent);
     }
 
@@ -430,7 +418,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // fitnessService.updateStepCount();
+        fitnessService.updateStepCount();
         // setBarChart();
     }
 }

@@ -6,7 +6,6 @@ import android.os.Bundle;
 //import android.support.design.widget.FloatingActionButton;
 //import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -28,19 +27,19 @@ import java.util.List;
 import java.util.Map;
 
 public class MessageActivity extends AppCompatActivity {
+    public static final String COLLECTION_KEY = "chats";
+    public static final String MESSAGES_KEY = "messages";
+    public static final String FROM_KEY = "from";
+    public static final String TEXT_KEY = "text";
+    public static final String TIMESTAMP_KEY = "timestamp";
+    public static final String TAG = "MessageActivity";
 
-    String TAG = MainActivity.class.getSimpleName();
+    private Button send_button;
+    private Button back_button;
 
     String user_email;
     String friend_email;
-
-    String COLLECTION_KEY = "chats";
-    String DOCUMENT_KEY;
-    String MESSAGES_KEY = "messages";
-    String FROM_KEY = "from";
-    String TEXT_KEY = "text";
-    String TIMESTAMP_KEY = "timestamp";
-
+    String document_key;
     CollectionReference chat;
     String from;
 
@@ -48,43 +47,39 @@ public class MessageActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences sharedPreferences = getSharedPreferences("PersonalBest", Context.MODE_PRIVATE);
-        this.user_email = getIntent().getStringExtra("user_email");
-        this.friend_email = getIntent().getStringExtra("friend_email");
+        user_email = getIntent().getStringExtra("user_email");
+        friend_email = getIntent().getStringExtra("friend_email");
 
         from = sharedPreferences.getString(FROM_KEY, user_email);
 
-        if (user_email.compareTo(friend_email) >= 0) {
-            DOCUMENT_KEY = user_email + "~" + friend_email;
-        } else {
-            DOCUMENT_KEY = friend_email + "~" + user_email;
-        }
+        // Construct document key for the private chat room
+        this.document_key = buildDocumentKey(user_email, friend_email);
 
         setContentView(R.layout.activity_message);
-        Button send = (Button) findViewById(R.id.btn_send);
-        Button goBack = (Button) findViewById(R.id.go_back);
 
-        goBack.setOnClickListener(new View.OnClickListener(){
+
+        back_button = (Button) findViewById(R.id.message_back_button);
+        back_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 finish();
             }
         });
-        /*
-        send.setOnClickListener(new View.OnClickListener() {
+
+        send_button = (Button) findViewById(R.id.send_button);
+        send_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 sendMessage();
             }
-        });*/
+        });
 
         chat = FirebaseFirestore.getInstance()
                 .collection(COLLECTION_KEY)
-                .document(DOCUMENT_KEY)
+                .document(document_key)
                 .collection(MESSAGES_KEY);
 
         initMessageUpdateListener();
-
-        findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
 
         subscribeToNotificationsTopic();
 
@@ -106,6 +101,20 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private String buildDocumentKey(String user_email, String friend_email) {
+        if (user_email.indexOf("@") != -1) {
+            user_email = user_email.substring(0, user_email.indexOf("@"));
+        }
+        if (friend_email.indexOf("@") != -1) {
+            friend_email = friend_email.substring(0, friend_email.indexOf("@"));
+        }
+
+        if (user_email.compareTo(friend_email) >= 0) {
+            return user_email + "~" + friend_email;
+        }
+        return friend_email + "~" + user_email;
     }
 
     private void sendMessage(){
@@ -151,7 +160,7 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void subscribeToNotificationsTopic() {
-        FirebaseMessaging.getInstance().subscribeToTopic(DOCUMENT_KEY)
+        FirebaseMessaging.getInstance().subscribeToTopic(document_key)
                 .addOnCompleteListener(task -> {
                             String msg = "Subscribed to notifications";
                             if (!task.isSuccessful()) {

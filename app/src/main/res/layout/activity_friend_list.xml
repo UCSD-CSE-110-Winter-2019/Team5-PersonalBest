@@ -1,58 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/friend_list_layout"
     android:focusable="true"
     android:focusableInTouchMode="true"
     android:clickable="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/friend_list_label"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:text="Friend List"
+        android:textSize="40sp" />
+
     <Button
         android:id="@+id/friend1"
-        android:layout_width="407dp"
+        android:layout_width="400dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="54dp"
-        android:text="Firend1" />
+        android:layout_marginTop="50dp"
+        android:visibility="invisible"
+        android:text="test@ucsd.edu" />
 
-    <ScrollView
-        android:id="@+id/scroll_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_above="@id/text_message"
-        android:background="#ECEFF1"
-        android:fillViewport="true"
-        android:overScrollMode="always">
-
-    </ScrollView>
     <Button
-        android:id="@+id/add_friend"
+        android:id="@+id/friend2"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="100dp"
+        android:visibility="invisible"
+        android:text="yux166@ucsd.edu" />
+
+    <Button
+        android:id="@+id/friend3"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="150dp"
+        android:visibility="invisible"
+        android:text="test@ucsd.edu" />
+
+    <Button
+        android:id="@+id/friend4"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="200dp"
+        android:visibility="invisible"
+        android:text="yux166@ucsd.edu" />
+
+    <Button
+        android:id="@+id/friend5"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:visibility="invisible"
+        android:text="test@ucsd.edu" />
+
+    <Button
+        android:id="@+id/friend6"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:visibility="invisible"
+        android:text="yux166@ucsd.edu" />
+
+    <Button
+        android:id="@+id/friend7"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:visibility="invisible"
+        android:text="test@ucsd.edu" />
+
+    <Button
+        android:id="@+id/friend8"
+        android:layout_width="400dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="300dp"
+        android:visibility="invisible"
+        android:text="yux166@ucsd.edu" />
+
+    <Button
+        android:id="@+id/add_friend_button"
         android:layout_width="407dp"
         android:layout_height="wrap_content"
-        android:layout_above="@id/go_back"
+        android:layout_above="@id/message_back_button"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="54dp"
+        android:layout_marginBottom="50dp"
         android:text="Add friend" />
 
     <Button
-        android:id="@+id/back"
+        android:id="@+id/friend_list_back_button"
         android:layout_width="407dp"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginStart="10dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginBottom="3dp"
         android:text="Back" />
 
 </RelativeLayout>

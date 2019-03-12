@@ -85,18 +85,4 @@ public class SharedPrefManager implements IUserObserver {
         Log.i("SharedPrefManager Retrieve Size", sharedPreferences.getInt(SIZE_KEY, 0) + "");
         Log.i("SharedPrefManager Retrieve Curday", sharedPreferences.getInt(DAY_KEY,0) + "");
     }
-
-    private void storeIntArray(String baseKey,int[] intArray){
-        for(int i=0;i<intArray.length;i++){
-            editor.putInt(baseKey+i,intArray[i]);
-        }
-    }
-
-    private int[] parseIntArray(String baseKey){
-        int[] retArray=new int[7];
-        for(int i=0;i<retArray.length;i++){
-            retArray[i]=sharedPreferences.getInt(baseKey+i,0);
-        }
-        return retArray;
-    }
 }

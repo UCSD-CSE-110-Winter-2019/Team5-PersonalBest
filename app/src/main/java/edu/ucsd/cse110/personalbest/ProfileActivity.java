@@ -11,23 +11,22 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
     public static final String TAG = "ProfileActivity";
     public static final String COLLECTION_KEY = "Users";
 
+
+    private Button back_button;
+    private Button message_button;
+
     TextView friend_name;
 
-    String userEmail;
+    String user_email;
+    String friend_email;
     DocumentReference documentReference;
 
     @Override
@@ -35,15 +34,14 @@ public class ProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
 
-        userEmail = getIntent().getSerializableExtra("email").toString();
-        this.documentReference = FirebaseFirestore.getInstance().collection(COLLECTION_KEY).document(userEmail);
+        user_email = getIntent().getSerializableExtra("user_email").toString();
+        friend_email = getIntent().getSerializableExtra("friend_email").toString();
+        this.documentReference = FirebaseFirestore.getInstance().collection(COLLECTION_KEY).document(user_email);
 
         this.getData();
 
-        Log.d(TAG, "HAHAHAHAHAHAHAHAHAHA");
-
-        Button goBack = (Button) findViewById(R.id.back_button);
-        goBack.setOnClickListener(new View.OnClickListener(){
+        back_button = (Button) findViewById(R.id.profile_back_button);
+        back_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
                 finish();
@@ -51,8 +49,9 @@ public class ProfileActivity extends AppCompatActivity {
         });
 
         friend_name = findViewById(R.id.name_label);
+        friend_name.setText(friend_email);
 
-        Button message_button = (Button) findViewById(R.id.friend_message_button);
+        message_button = (Button) findViewById(R.id.friend_message_button);
         message_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
@@ -63,8 +62,8 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void switchToMessage(){
         Intent intent = new Intent(this, MessageActivity.class);
-        intent.putExtra("user_email", this.userEmail);
-        intent.putExtra("friend_email", friend_name.getText());
+        intent.putExtra("user_email", this.user_email);
+        intent.putExtra("friend_email", this.friend_email);
         startActivity(intent);
     }
 
