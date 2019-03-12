@@ -80,6 +80,7 @@ public class MessageActivity extends AppCompatActivity {
                 .collection(MESSAGES_KEY);
 
         initMessageUpdateListener();
+
         subscribeToNotificationsTopic();
 
         EditText nameView = findViewById((R.id.user_name));

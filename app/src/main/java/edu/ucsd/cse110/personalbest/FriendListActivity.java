@@ -7,31 +7,42 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
+import android.text.Layout;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class FriendListActivity extends AppCompatActivity implements IcheckList{
-    final String TAG = "FriendListActivity";
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 
-    final String COLLECTION_KEY     = "Users";
-    final String REQ_KEY            = "Request list";
-    final String LIST_KEY           = "Friend list";
-    final String REQ_EMAIL_KEY      = "Requested Email";
-    final String FRIEND_EMAIL_KEY   = "Friend's Email";
+public class FriendListActivity extends AppCompatActivity implements IcheckList{
+    public static final String TAG = "FriendListActivity";
+
+    public static final String COLLECTION_KEY     = "Users";
+    public static final String REQ_KEY            = "Request list";
+    public static final String LIST_KEY           = "Friend list";
+    public static final String REQ_EMAIL_KEY      = "Requested Email";
+    public static final String FRIEND_EMAIL_KEY   = "Friend's Email";
+
+    private int current_button_location = 100;
 
     CollectionReference users;
     DocumentReference   selfDoc;
@@ -46,7 +57,6 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
     String s;
     String userEmail;
     String docID;
-    String friend_email;
 
     private boolean isList;
 
@@ -66,6 +76,8 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
         selfRequestList = selfDoc.collection(REQ_KEY);
         selfFriendList = selfDoc.collection(LIST_KEY);
 
+        initFriendUpdateListener();
+
         Button addFriend = (Button) findViewById(R.id.add_friend_button);
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,31 +93,55 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                 finish();
             }
         });
-      
-        Button friend1 = (Button) findViewById(R.id.friend1);
-        friend1.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                friend_email = friend1.getText().toString();
-                switchToFriend();
-            }
-        });
 
-        Button friend2 = (Button) findViewById(R.id.friend2);
-        friend2.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                friend_email = friend2.getText().toString();
-                switchToFriend();
-            }
-        });
         Log.d( TAG, "@@@@@@@@@@@ finished oncreate method @@@@@@@@@@");
     }
 
-    private void switchToFriend(){
+    private void initFriendUpdateListener() {
+        selfFriendList.addSnapshotListener((newChatSnapShot, error) -> {
+                    if (error != null) {
+                        Log.e(TAG, error.getLocalizedMessage());
+                        return;
+                    }
+
+                    if (newChatSnapShot != null && !newChatSnapShot.isEmpty()) {
+                        StringBuilder sb = new StringBuilder();
+                        List<DocumentChange> documentChanges = newChatSnapShot.getDocumentChanges();
+
+                        RelativeLayout relativeLayout = (RelativeLayout)findViewById(R.id.friend_list_layout);
+                        documentChanges.forEach(change -> {
+                            QueryDocumentSnapshot document = change.getDocument();
+
+                            String friend_email = document.get(FRIEND_EMAIL_KEY).toString();
+                            Button friend_button = new Button(this);
+                            relativeLayout.addView(friend_button);
+                            friend_button.setText(friend_email);
+                            friend_button.setWidth(800);
+                            setMargins(friend_button, 0, 0, 0);
+                            friend_button.setOnClickListener(new View.OnClickListener(){
+                                @Override
+                                public void onClick(View view){
+                                    switchToFriend(friend_email);
+                                }
+                            });
+                        });
+                    }
+                });
+    }
+
+    private void setMargins (View view, int left, int right, int bottom) {
+        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            p.setMargins(left, current_button_location, right, bottom);
+            current_button_location += 100;
+            view.requestLayout();
+        }
+    }
+
+    private void switchToFriend(String friend_email){
         Intent intent = new Intent(this, ProfileActivity.class);
         intent.putExtra("user_email", this.userEmail);
-        intent.putExtra("friend_email", this.friend_email);
+        intent.putExtra("friend_email", friend_email);
         startActivity(intent);
     }
 
@@ -151,10 +187,10 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
 
         if( list.getId() == REQ_KEY ) {
             s = REQ_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@" + checkEmail);
+            // Log.d(TAG,"@@@@@@@@@@@@@@@@@ check request list @@@@@@@@@@@@@@" + checkEmail);
         } else if ( list.getId() == LIST_KEY ) {
             s = FRIEND_EMAIL_KEY;
-            Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@" + checkEmail);
+            // Log.d(TAG,"@@@@@@@@@@@@@@@@@@@@ check friend list @@@@@@@@@@@@@" + checkEmail);
         }
 
         list.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -172,7 +208,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
                             if( list.getId() == REQ_KEY ) {
                                 docID = document.getId();
                             }
-                            Log.d(TAG,s+"@@@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
+                            // Log.d(TAG,s+"@@@@@@@ found  true @@@@@@@" +isList+"@@@@@" + list.getParent().getId() + s + checkEmail );
 
                             if(list.getParent().getId() == inputEmail ) {
                                 check.addFriend();
@@ -205,7 +241,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
     public void addFriend ( ) {
         DocumentReference reqDoc;
 
-        Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
+        // Log.d(TAG,"@@@@@@@@@@@@ successfully added @@@@@@@@@@");
 
         reqDoc = otherRequestList.document(docID);
         reqDoc.delete();
@@ -222,7 +258,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
 
     }
     public void addRequest(){
-        Log.d(TAG, "@@@@@@@@@ Didn't add @@@@@@@@@@@");
+        // Log.d(TAG, "@@@@@@@@@ Didn't add @@@@@@@@@@@");
         Map<String, String> req = new HashMap<>();
         req.put( REQ_EMAIL_KEY, inputEmail );
         selfRequestList.add(req);
