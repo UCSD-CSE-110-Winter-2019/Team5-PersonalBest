@@ -1,13 +1,15 @@
 package edu.ucsd.cse110.personalbest;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
 public class User implements ISubject<IUserObserver>{
-    public static final int DAY_OF_MONTH = 30;
-
-    private static final int MS_IN_DAY = 86400000;
+    public static final String TAG = "User";
+    public static final int MS_IN_DAY = 86400000;
+    public static final int MS_IN_HOUR = 3600000;
 
     private Collection<IUserObserver> observers;
 
@@ -49,7 +51,8 @@ public class User implements ISubject<IUserObserver>{
         this.goal = 0;
         this.totalSteps = 0;
         this.curExercise = new Exercise();
-        this.currentDay = (int)(Calendar.getInstance().getTimeInMillis() / MS_IN_DAY);
+        this.currentDay = ((int)(Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) / MS_IN_DAY);
+        Log.i(TAG, ((Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR)  + ""));
         this.goalHistory = new ArrayList<>();
         this.walkHistory = new ArrayList<>();
         this.exerciseHistory = new ArrayList<>();

@@ -42,7 +42,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
     public static final String REQ_EMAIL_KEY      = "Requested Email";
     public static final String FRIEND_EMAIL_KEY   = "Friend's Email";
 
-    private int current_button_location = 100;
+    private int current_button_location = 150;
 
     CollectionReference users;
     DocumentReference   selfDoc;
