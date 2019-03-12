@@ -14,4 +14,6 @@
     <string name="history_label">Walk history</string>
     <string name="go_back_button">Go back</string>
     <string name="change_goal_button">CHANGE GOAL</string>
+    <string name="friend_list_button">Friend List</string>
+    <string name="set_email_button">Set Email</string>
 </resources>
