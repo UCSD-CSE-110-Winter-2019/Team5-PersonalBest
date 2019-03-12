@@ -32,7 +32,7 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
-    private static final String TAG = "StepCountActivity";
+    private static final String TAG = "MainActivity";
     private static final long MS_IN_DAY = 86400000;
     // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
@@ -55,7 +55,6 @@ public class MainActivity extends AppCompatActivity {
     private Button goal_update_button;
     private Button walk_history_button;
     private Button start_button;
-    private Button messageButton;
     private Button listButton;
     private Button setButton;
 
@@ -174,15 +173,8 @@ public class MainActivity extends AppCompatActivity {
                 switchState(v);
             }
         });
-        messageButton = (Button) findViewById(R.id.message_button);
-        messageButton.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view){
-                switchToMessage();
-            }
-        });
 
-        listButton = (Button) findViewById(R.id.friend_list);
+        listButton = (Button) findViewById(R.id.friend_list_button);
         listButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -190,7 +182,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        setButton = (Button) findViewById( R.id.set_email );
+        setButton = (Button) findViewById( R.id.set_email_button);
         setButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -225,12 +217,6 @@ public class MainActivity extends AppCompatActivity {
         if(state == 0) {
             setExerciseVisibility(View.INVISIBLE);
         }
-    }
-
-    private void switchToMessage(){
-        Intent intent = new Intent(this, MessageActivity.class);
-        intent.putExtra("email", user.getEmailAddress());
-        startActivity(intent);
     }
 
     private void switchToList(){

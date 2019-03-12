@@ -57,11 +57,15 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
         userEmail = getIntent().getSerializableExtra("email").toString();
 
         users = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
-        selfDoc = users.document( userEmail );
+        if (userEmail.equals("")) {
+            selfDoc = users.document( "default" );
+        } else {
+            selfDoc = users.document( userEmail );
+        }
         selfRequestList = selfDoc.collection(REQ_KEY);
         selfFriendList = selfDoc.collection(LIST_KEY);
 
-        Button addFriend = (Button) findViewById(R.id.add_friend);
+        Button addFriend = (Button) findViewById(R.id.add_friend_button);
         addFriend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -69,7 +73,7 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
             }
         });
 
-        Button goBack = (Button) findViewById(R.id.back);
+        Button goBack = (Button) findViewById(R.id.friend_list_back_button);
         goBack.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){

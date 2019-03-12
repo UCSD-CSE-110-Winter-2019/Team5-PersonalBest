@@ -11,15 +11,9 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
     public static final String TAG = "ProfileActivity";
@@ -42,7 +36,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         Log.d(TAG, "HAHAHAHAHAHAHAHAHAHA");
 
-        Button goBack = (Button) findViewById(R.id.back_button);
+        Button goBack = (Button) findViewById(R.id.profile_back_button);
         goBack.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){

@@ -6,7 +6,6 @@ import android.os.Bundle;
 //import android.support.design.widget.FloatingActionButton;
 //import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -60,8 +59,8 @@ public class MessageActivity extends AppCompatActivity {
         }
 
         setContentView(R.layout.activity_message);
-        Button send = (Button) findViewById(R.id.btn_send);
-        Button goBack = (Button) findViewById(R.id.go_back);
+        Button send = (Button) findViewById(R.id.send_button);
+        Button goBack = (Button) findViewById(R.id.message_back_button);
 
         goBack.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -84,7 +83,7 @@ public class MessageActivity extends AppCompatActivity {
 
         initMessageUpdateListener();
 
-        findViewById(R.id.btn_send).setOnClickListener(view -> sendMessage());
+        findViewById(R.id.send_button).setOnClickListener(view -> sendMessage());
 
         subscribeToNotificationsTopic();
 
