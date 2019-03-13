@@ -7,7 +7,7 @@ import java.util.Calendar;
 import java.util.Collection;
 
 public class User implements ISubject<IUserObserver>{
-    public static final String TAG = "User";
+    public static final String TAG = "UserClass";
     public static final int MS_IN_DAY = 86400000;
     public static final int MS_IN_HOUR = 3600000;
 
@@ -51,8 +51,9 @@ public class User implements ISubject<IUserObserver>{
         this.goal = 0;
         this.totalSteps = 0;
         this.curExercise = new Exercise();
-        this.currentDay = ((int)(Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) / MS_IN_DAY);
-        Log.i(TAG, ((Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR)  + ""));
+        this.currentDay = (int)((Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) / MS_IN_DAY);
+        Log.i(TAG, (Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) + "");
+        Log.i(TAG, this.currentDay + "");
         this.goalHistory = new ArrayList<>();
         this.walkHistory = new ArrayList<>();
         this.exerciseHistory = new ArrayList<>();
