@@ -57,6 +57,9 @@ public class MainActivity extends AppCompatActivity {
     private Button start_button;
     private Button friend_list_button;
     private Button set_email_button;
+    // Button for demo
+    private Button add_steps_button;
+    private Button add_day_button;
 
     private User user;
     private SharedPreferences sharedPreferences;
@@ -146,6 +149,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view){
                 showBarChart(view);
+            }
+        });
+
+        add_steps_button = (Button) findViewById(R.id.add_steps_button);
+        add_steps_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                setCompleteContent(user.getTotalSteps() + 500);
+            }
+        });
+
+        add_day_button = (Button) findViewById(R.id.add_day_button);
+        add_day_button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                int today = user.getCurrentDay();
+                user.setCurrentDay(today + 1);
+                user.compareCurrentDay(today);
+
             }
         });
 
@@ -275,7 +297,10 @@ public class MainActivity extends AppCompatActivity {
     public void setCompleteContent(int stepCount) {
         this.user.setTotalSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
-        displayEncouragement();
+        this.setRemainingContent();
+        if (user.getGoal() != user.getTotalSteps()) {
+            displayEncouragement();
+        }
     }
 
     public void displayEncouragement() {
@@ -283,7 +308,7 @@ public class MainActivity extends AppCompatActivity {
         // Check whether there is data from yesterday
         if ( size > 1) {
             int improvement = this.user.getTotalSteps() - (int)this.user.getWalkHistory().get(size - 2);
-            if (improvement != 0 && improvement % 500 == 0) {
+            if (improvement > 0 && improvement % 500 == 0) {
                 Toast.makeText(this, "Congratulations! You have improved " + improvement + " steps!", Toast.LENGTH_LONG).show();
             }
         }

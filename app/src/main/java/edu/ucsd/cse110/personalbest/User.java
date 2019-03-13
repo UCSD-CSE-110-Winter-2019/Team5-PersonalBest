@@ -83,6 +83,7 @@ public class User implements ISubject<IUserObserver>{
             this.walkHistory.add(0);
             this.exerciseHistory.add(0);
         }
+        this.notifyObservers();
     }
 
     public void setGoal(int goal, boolean notify){
@@ -130,6 +131,12 @@ public class User implements ISubject<IUserObserver>{
     // For testing purpose
     public void setWalkHistory (ArrayList<Integer> walkHistory) {
         this.walkHistory = walkHistory;
+    }
+
+    // For demo purpose
+    public void setCurrentDay (int currentDay) {
+        this.currentDay = currentDay;
+        this.notifyObservers();
     }
 
 }
