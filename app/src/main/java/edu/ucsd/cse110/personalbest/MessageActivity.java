@@ -22,11 +22,22 @@ import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.messaging.FirebaseMessaging;
 
+import edu.ucsd.cse110.personalbest.chatmessage.ChatMessageService;
+import edu.ucsd.cse110.personalbest.chatmessage.ChatMessageServiceFactory;
+import edu.ucsd.cse110.personalbest.chatmessage.FirebaseFirestoreAdapter;
+import edu.ucsd.cse110.personalbest.notification.FirebaseCloudMessagingAdapter;
+import edu.ucsd.cse110.personalbest.notification.NotificationService;
+import edu.ucsd.cse110.personalbest.notification.NotificationServiceFactory;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class MessageActivity extends AppCompatActivity {
+    public static final String SHARED_PREFERENCES_NAME = "FirebaseLabApp";
+    public static final String CHAT_MESSAGE_SERVICE_EXTRA = "CHAT_MESSAGE_SERVICE";
+    public static final String NOTIFICATION_SERVICE_EXTRA = "NOTIFICATION_SERVICE";
+
     public static final String COLLECTION_KEY = "chats";
     public static final String MESSAGES_KEY = "messages";
     public static final String FROM_KEY = "from";
@@ -39,21 +50,24 @@ public class MessageActivity extends AppCompatActivity {
 
     String user_email;
     String friend_email;
-    String document_key;
-    CollectionReference chat;
+    String document_key = "chat1";
+
+    ChatMessageService chat;
     String from;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences sharedPreferences = getSharedPreferences("PersonalBest", Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         user_email = getIntent().getStringExtra("user_email");
         friend_email = getIntent().getStringExtra("friend_email");
 
         from = sharedPreferences.getString(FROM_KEY, user_email);
 
         // Construct document key for the private chat room
-        this.document_key = buildDocumentKey(user_email, friend_email);
+        if (user_email != null && friend_email != null) {
+            this.document_key = buildDocumentKey(user_email, friend_email);
+        }
 
         setContentView(R.layout.activity_message);
 
@@ -74,10 +88,11 @@ public class MessageActivity extends AppCompatActivity {
             }
         });
 
-        chat = FirebaseFirestore.getInstance()
-                .collection(COLLECTION_KEY)
-                .document(document_key)
-                .collection(MESSAGES_KEY);
+        String stringExtra = getIntent().getStringExtra(CHAT_MESSAGE_SERVICE_EXTRA);
+        chat = ChatMessageServiceFactory.getInstance().getOrDefault(stringExtra, FirebaseFirestoreAdapter::getInstance);
+        if (user_email != null && friend_email != null) {
+            chat = new FirebaseFirestoreAdapter(document_key);
+        }
 
         initMessageUpdateListener();
 
@@ -123,7 +138,7 @@ public class MessageActivity extends AppCompatActivity {
         newMessage.put(FROM_KEY, from);
         newMessage.put(TEXT_KEY, messageView.getText().toString());
         //chat.add(newMessage);
-        chat.add(newMessage).addOnSuccessListener(result -> {
+        chat.addMessage(newMessage).addOnSuccessListener(result -> {
             messageView.setText("");
             //Toast.makeText(this,"lalalalalala", Toast.LENGTH_SHORT).show();
         }).addOnFailureListener(error -> {
@@ -133,43 +148,29 @@ public class MessageActivity extends AppCompatActivity {
     }
 
     private void initMessageUpdateListener() {
-        chat.orderBy(TIMESTAMP_KEY, Query.Direction.ASCENDING)
-                .addSnapshotListener((newChatSnapShot, error) -> {
-            if (error != null) {
-                Log.e(TAG, error.getLocalizedMessage());
-                return;
-            }
-
-            if (newChatSnapShot != null && !newChatSnapShot.isEmpty()) {
-                StringBuilder sb = new StringBuilder();
-                List<DocumentChange> documentChanges = newChatSnapShot.getDocumentChanges();
-                documentChanges.forEach(change -> {
-                    QueryDocumentSnapshot document = change.getDocument();
-                    sb.append(document.get(FROM_KEY));
-                    sb.append(":\n");
-                    sb.append(document.get(TEXT_KEY));
-                    sb.append("\n");
-                    sb.append("---\n");
+        TextView chatView = findViewById(R.id.chat);
+        chat.addOrderedMessagesListener(
+                chatMessagesList -> {
+                    Log.d(TAG, "msg list size:" + chatMessagesList.size());
+                    chatMessagesList.forEach(chatMessage -> {
+                        chatView.append(chatMessage.toString());
+                    });
                 });
-
-
-                TextView chatView = findViewById(R.id.chat);
-                chatView.append(sb.toString());
-            }
-        });
     }
 
     private void subscribeToNotificationsTopic() {
-        FirebaseMessaging.getInstance().subscribeToTopic(document_key)
-                .addOnCompleteListener(task -> {
-                            String msg = "Subscribed to notifications";
-                            if (!task.isSuccessful()) {
-                                msg = "Subscribe to notifications failed";
-                            }
-                            Log.d(TAG, msg);
-                            Toast.makeText(MessageActivity.this, msg, Toast.LENGTH_SHORT).show();
-                        }
-                );
+        NotificationServiceFactory notificationServiceFactory = NotificationServiceFactory.getInstance();
+        String notificationServiceKey = getIntent().getStringExtra(NOTIFICATION_SERVICE_EXTRA);
+        NotificationService notificationService = notificationServiceFactory.getOrDefault(notificationServiceKey, FirebaseCloudMessagingAdapter::getInstance);
+
+        notificationService.subscribeToNotificationsTopic(document_key, task -> {
+            String msg = "Subscribed to notifications";
+            if (!task.isSuccessful()) {
+                msg = "Subscribe to notifications failed";
+            }
+            Log.d(TAG, msg);
+            Toast.makeText(MessageActivity.this, msg, Toast.LENGTH_SHORT).show();
+        });
     }
 
 }
