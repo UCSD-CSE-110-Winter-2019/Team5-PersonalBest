@@ -269,4 +269,5 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
     public void toast ( String message ) {
         Toast.makeText(FriendListActivity.this, message, Toast.LENGTH_LONG).show();
     }
+
 }

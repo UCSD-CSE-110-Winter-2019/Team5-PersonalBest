@@ -1,13 +1,21 @@
 package edu.ucsd.cse110.personalbest.Managers;
 
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import edu.ucsd.cse110.personalbest.IUserObserver;
 import edu.ucsd.cse110.personalbest.User;
@@ -27,8 +35,7 @@ public class FireStoreManager implements IUserObserver {
     public static final String EXERCISE_HISTORY_KEY = "ExerciseHistory";
 
 
-
-    public FireStoreManager(User user){
+    public FireStoreManager(User user) {
         this.collectionReference = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
         this.user = user;
         this.user.register(this);
@@ -39,7 +46,32 @@ public class FireStoreManager implements IUserObserver {
         this.uploadData();
     }
 
-    public void uploadData(){
+    public void retrieveData() {
+        if (this.user.getEmailAddress().equals("")) {
+            this.documentReference = this.collectionReference.document("default");
+        } else {
+            this.documentReference = this.collectionReference.document(this.user.getEmailAddress());
+        }
+        this.documentReference.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot documentSnapshot = task.getResult();
+                if (documentSnapshot.exists()) {
+                    Map<String, Object> map = documentSnapshot.getData();
+
+                    user.setExerciseHistory(parseIntArray((ArrayList<Long>) map.get(EXERCISE_HISTORY_KEY)), false);
+                    user.setWalkHistory(parseIntArray((ArrayList<Long>) map.get(WALK_HISTORY_KEY)), false);
+                    user.setGoalHistory(parseIntArray((ArrayList<Long>) map.get(GOAL_HISTORY_KEY)), false);
+                    Log.d(TAG, user.getWalkHistory().toString());
+                } else {
+                    Log.d(TAG, "No such document");
+                }
+            } else {
+                Log.d(TAG, "Get failed with ", task.getException());
+            }
+        });
+    }
+
+    public void uploadData() {
         if (this.user.getEmailAddress().equals("")) {
             this.documentReference = this.collectionReference.document("default");
         } else {
@@ -87,7 +119,14 @@ public class FireStoreManager implements IUserObserver {
             }
         });
         */
+    }
 
+    private ArrayList<Integer> parseIntArray(ArrayList<Long> array) {
+        ArrayList<Integer> ret = new ArrayList<>();
+        for (int i = 0; i < array.size(); i++) {
+            ret.add(array.get(i).intValue());
+        }
+        return ret;
     }
 
 }

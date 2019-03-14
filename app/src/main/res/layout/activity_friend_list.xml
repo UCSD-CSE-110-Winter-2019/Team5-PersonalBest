@@ -19,32 +19,36 @@
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:visibility="invisible"
-        android:text="test@ucsd.edu" />
+        android:onClick="accessData"
+        android:text="test@ucsd.edu"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/friend2"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:visibility="invisible"
-        android:text="yux166@ucsd.edu" />
+        android:onClick="accessData"
+        android:text="yux166@ucsd.edu"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/friend3"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="150dp"
-        android:visibility="invisible"
-        android:text="test@ucsd.edu" />
+        android:onClick="accessData"
+        android:text="test@ucsd.edu"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/friend4"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="200dp"
-        android:visibility="invisible"
-        android:text="yux166@ucsd.edu" />
+        android:onClick="accessData"
+        android:text="yux166@ucsd.edu"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/friend5"
@@ -67,16 +71,18 @@
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="250dp"
-        android:visibility="invisible"
-        android:text="test@ucsd.edu" />
+        android:onClick="accessData"
+        android:text="test@ucsd.edu"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/friend8"
         android:layout_width="400dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="300dp"
-        android:visibility="invisible"
-        android:text="yux166@ucsd.edu" />
+        android:onClick="accessData"
+        android:text="yux166@ucsd.edu"
+        android:visibility="invisible" />
 
     <Button
         android:id="@+id/add_friend_button"
