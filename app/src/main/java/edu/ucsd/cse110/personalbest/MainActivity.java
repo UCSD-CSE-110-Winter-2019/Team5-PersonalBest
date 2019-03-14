@@ -322,6 +322,7 @@ public class MainActivity extends AppCompatActivity {
         // show "DONE!" when the goal is achieved and make a toast message to remind the user
         else if (!remaining_content.getText().toString().equals("DONE!")) {
             remaining_content.setText("DONE!");
+            promptDialog("Set Up New Goal", "Input your new goal here:", true);
             Toast.makeText(this, "Congratulations! You have completed today's goal!", Toast.LENGTH_LONG).show();
         }
     }
