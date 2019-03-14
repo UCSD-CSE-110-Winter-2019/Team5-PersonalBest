@@ -333,63 +333,10 @@ public class MainActivity extends AppCompatActivity {
     /* function to show the bar chart recording user's past week's work out */
     public void showBarChart(View view){
         Intent intent=new Intent(this,BarActivity.class);
-        intent.putExtra("weekWalks",weekWalks);
-        intent.putExtra("weekSteps",weekSteps);
-        for(int i=0;i<7;i++){
-            if(weekGoals[i]==0) weekGoals[i]=i==0?5000:weekGoals[i-1];
-        }
-        intent.putExtra("weekGoals",weekGoals);
+        intent.putExtra("source","default");
         startActivity(intent);
     }
 
-    /* function to set up the bar chart */
-    public void setBarChart(){
-        fitnessService.getStepHistory();
-
-        // create a cal object and set its attributes
-        android.icu.util.Calendar cal = android.icu.util.Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        cal.set(android.icu.util.Calendar.HOUR_OF_DAY,23);
-        cal.set(android.icu.util.Calendar.MINUTE,59);
-        cal.set(android.icu.util.Calendar.SECOND,59);
-        cal.set(android.icu.util.Calendar.MILLISECOND,999);
-        long endTime = cal.getTimeInMillis();
-        cal.add(android.icu.util.Calendar.WEEK_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
-
-        // get information from sharedPreferences
-        SharedPreferences sharedPreferences=getSharedPreferences("user_name",MODE_PRIVATE);
-        SharedPreferences.Editor editor=sharedPreferences.edit();
-        Map<String,?> map=sharedPreferences.getAll();
-
-        // using iterator to save the past 7 days' information
-        Iterator it=map.entrySet().iterator();
-        weekWalks=new int[7];
-        while(it.hasNext()){
-            Map.Entry pair=(Map.Entry)it.next();
-            if(pair.getKey().toString().substring(0,4).equals("goal")){
-                long locator = Long.parseLong(pair.getKey().toString().substring(4)) - startTime;
-                if (locator < 0) {
-                    editor.remove(pair.getKey().toString());
-                } else {
-                    int day = (int) (locator / MS_IN_DAY);
-                    int newSave = Integer.parseInt(pair.getValue().toString());
-                    weekGoals[day] += Math.max(weekGoals[day],newSave);
-                }
-            }
-            else {
-                long locator = Long.parseLong(pair.getKey().toString()) * 1000 - startTime;
-                System.out.println(locator);
-                if (locator < 0) {
-                    editor.remove(pair.getKey().toString());
-                } else {
-                    int day = (int) (locator / MS_IN_DAY);
-                    weekWalks[day] += Integer.parseInt(pair.getValue().toString());
-                }
-            }
-        }
-    }
 
     /* function to show the dialog to prompt user to enter new goal */
     private void promptDialog ( String title, String message, boolean isGoal ) {

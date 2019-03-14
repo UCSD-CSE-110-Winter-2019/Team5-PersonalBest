@@ -67,6 +67,12 @@ public class ProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void accessData(View view){
+        Intent intent=new Intent(this,BarActivity.class);
+        intent.putExtra("source",this.friend_email);
+        startActivity(intent);
+    }
+
     public void getData() {
         this.documentReference.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override

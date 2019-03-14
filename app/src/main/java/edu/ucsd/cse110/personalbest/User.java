@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 
-public class User implements ISubject<IUserObserver>{
+public class User implements ISubject<IUserObserver> {
     public static final String TAG = "UserClass";
     public static final int MS_IN_DAY = 86400000;
     public static final int MS_IN_HOUR = 3600000;
@@ -45,13 +45,13 @@ public class User implements ISubject<IUserObserver>{
     }
 
     // User constrcutor
-    User(){
+    User() {
         this.observers = new ArrayList<IUserObserver>();
         this.emailAddress = "default";
         this.goal = 0;
         this.totalSteps = 0;
         this.curExercise = new Exercise();
-        this.currentDay = (int)((Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) / MS_IN_DAY);
+        this.currentDay = (int) ((Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) / MS_IN_DAY);
         Log.i(TAG, (Calendar.getInstance().getTimeInMillis() - 7 * MS_IN_HOUR) + "");
         Log.i(TAG, this.currentDay + "");
         this.goalHistory = new ArrayList<>();
@@ -59,23 +59,41 @@ public class User implements ISubject<IUserObserver>{
         this.exerciseHistory = new ArrayList<>();
     }
 
-    public int getGoal() { return this.goal; }
+    public int getGoal() {
+        return this.goal;
+    }
 
-    public int getTotalSteps() { return this.totalSteps; }
+    public int getTotalSteps() {
+        return this.totalSteps;
+    }
 
-    public int getExerciseSteps() { return this.exerciseSteps; }
+    public int getExerciseSteps() {
+        return this.exerciseSteps;
+    }
 
-    public Exercise getCurExercise() { return this.curExercise; }
+    public Exercise getCurExercise() {
+        return this.curExercise;
+    }
 
-    public String getEmailAddress() { return this.emailAddress; }
+    public String getEmailAddress() {
+        return this.emailAddress;
+    }
 
-    public int getCurrentDay() { return this.currentDay; }
+    public int getCurrentDay() {
+        return this.currentDay;
+    }
 
-    public ArrayList getGoalHistory() { return this.goalHistory; }
+    public ArrayList<Integer> getGoalHistory() {
+        return this.goalHistory;
+    }
 
-    public ArrayList getWalkHistory() { return this.walkHistory; }
+    public ArrayList<Integer> getWalkHistory() {
+        return this.walkHistory;
+    }
 
-    public ArrayList getExerciseHistory() { return this.exerciseHistory; }
+    public ArrayList<Integer> getExerciseHistory() {
+        return this.exerciseHistory;
+    }
 
     public void compareCurrentDay(int currentDay) {
         for (int i = 0; i < this.currentDay - currentDay; i++) {
@@ -86,7 +104,7 @@ public class User implements ISubject<IUserObserver>{
         this.notifyObservers();
     }
 
-    public void setGoal(int goal, boolean notify){
+    public void setGoal(int goal, boolean notify) {
         this.goal = goal;
         if (this.goalHistory.size() > 0) {
             this.goalHistory.set(goalHistory.size() - 1, goal);
@@ -96,7 +114,7 @@ public class User implements ISubject<IUserObserver>{
         }
     }
 
-    public void setTotalSteps(int curSteps, boolean notify){
+    public void setTotalSteps(int curSteps, boolean notify) {
         this.totalSteps = curSteps;
         if (this.walkHistory.size() > 0) {
             this.walkHistory.set(walkHistory.size() - 1, curSteps);
@@ -117,8 +135,11 @@ public class User implements ISubject<IUserObserver>{
         }
     }
 
-    public void setCurExercise(Exercise curExercise, boolean notify){
+    public void setCurExercise(Exercise curExercise, boolean notify) {
         this.curExercise = curExercise;
+        if (notify) {
+            this.notifyObservers();
+        }
     }
 
     public void setEmailAddress(String emailAddress, boolean notify) {
@@ -128,13 +149,31 @@ public class User implements ISubject<IUserObserver>{
         }
     }
 
-    // For testing purpose
-    public void setWalkHistory (ArrayList<Integer> walkHistory) {
-        this.walkHistory = walkHistory;
+    public void setGoalHistory(ArrayList<Integer> goalHistory, boolean notify) {
+        this.goalHistory = goalHistory;
+        if (notify) {
+            this.notifyObservers();
+        }
+
     }
 
+    public void setExerciseHistory(ArrayList<Integer> exerciseHistory,boolean notify) {
+        this.exerciseHistory = exerciseHistory;
+        if (notify) {
+            this.notifyObservers();
+        }
+    }
+
+    public void setWalkHistory(ArrayList<Integer> walkHistory,boolean notify) {
+        this.walkHistory = walkHistory;
+        if (notify) {
+            this.notifyObservers();
+        }
+    }
+
+
     // For demo purpose
-    public void setCurrentDay (int currentDay) {
+    public void setCurrentDay(int currentDay) {
         this.currentDay = currentDay;
         this.notifyObservers();
     }

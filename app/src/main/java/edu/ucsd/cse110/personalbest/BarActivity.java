@@ -1,110 +1,147 @@
 package edu.ucsd.cse110.personalbest;
 
-import android.graphics.Color;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
-import com.jjoe64.graphview.GraphView;
-import com.jjoe64.graphview.LegendRenderer;
-import com.jjoe64.graphview.helper.DateAsXAxisLabelFormatter;
-import com.jjoe64.graphview.series.BarGraphSeries;
-import com.jjoe64.graphview.series.DataPoint;
-import com.jjoe64.graphview.series.LineGraphSeries;
-import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
+import com.github.mikephil.charting.data.BarData;
+import com.github.mikephil.charting.data.BarDataSet;
+import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.utils.ColorTemplate;
+import com.google.type.Color;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
+import java.util.Random;
+
+import edu.ucsd.cse110.personalbest.Managers.FireStoreManager;
+import edu.ucsd.cse110.personalbest.Managers.SharedPrefManager;
 
 public class BarActivity extends AppCompatActivity {
-
+    BarChart walkchart;
+    BarChart exercisechart;
+    User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bar);
-        GraphView graph = (GraphView) findViewById(R.id.graph);
-
-        // get weekly stats
-        int[] weekWalks=getIntent().getIntArrayExtra("weekWalks");
-        int[] weekSteps=getIntent().getIntArrayExtra("weekSteps");
-        int[] weekGoals=getIntent().getIntArrayExtra("weekGoals");
-
-        // set up new cal, date and time
-        android.icu.util.Calendar cal = android.icu.util.Calendar.getInstance();
-        Date now = cal.getTime();
-        Date[] timestamp=new Date[7];
-        timestamp[6]=now;
-
-        // add date to cal
-        for (int i=1;i<7;i++){
-            cal.add(Calendar.DATE,-1);
-            timestamp[6-i]=cal.getTime();
-        }
-
-        // pre-set slots for weekly walks
-        BarGraphSeries<DataPoint> series = new BarGraphSeries<>(new DataPoint[] {
-                new DataPoint(timestamp[0], weekSteps[0]),
-                new DataPoint(timestamp[1], weekSteps[1]),
-                new DataPoint(timestamp[2], weekSteps[2]),
-                new DataPoint(timestamp[3], weekSteps[3]),
-                new DataPoint(timestamp[4], weekSteps[4]),
-                new DataPoint(timestamp[5], weekSteps[5]),
-                new DataPoint(timestamp[6], weekSteps[6]),
-        });
-
-        // pre-set slots for weekly steps
-        BarGraphSeries<DataPoint> series2 = new BarGraphSeries<>(new DataPoint[] {
-                new DataPoint(timestamp[0], weekWalks[0]),
-                new DataPoint(timestamp[1], weekWalks[1]),
-                new DataPoint(timestamp[2], weekWalks[2]),
-                new DataPoint(timestamp[3], weekWalks[3]),
-                new DataPoint(timestamp[4], weekWalks[4]),
-                new DataPoint(timestamp[5], weekWalks[5]),
-                new DataPoint(timestamp[6], weekWalks[6]),
-        });
-
-        // pre-set for weekly goals
-        LineGraphSeries<DataPoint> series3 = new LineGraphSeries<>(new DataPoint[] {
-                new DataPoint(timestamp[0], weekGoals[0]),
-                new DataPoint(timestamp[1], weekGoals[1]),
-                new DataPoint(timestamp[2], weekGoals[2]),
-                new DataPoint(timestamp[3], weekGoals[3]),
-                new DataPoint(timestamp[4], weekGoals[4]),
-                new DataPoint(timestamp[5], weekGoals[5]),
-                new DataPoint(timestamp[6], weekGoals[6]),
-        });
-
-        // set different color for weekly steps and goals to display on the bar chart
-        series2.setColor(Color.RED);
-        series3.setColor(Color.BLACK);
-
-        // add these series to the graph to be shown
-        graph.addSeries(series);
-        graph.addSeries(series2);
-        graph.addSeries(series3);
-        series.setSpacing(10);
-        series2.setSpacing(10);
-        graph.getGridLabelRenderer().setLabelFormatter(new DateAsXAxisLabelFormatter(this,new SimpleDateFormat("MM/dd")));
-        graph.getGridLabelRenderer().setNumHorizontalLabels(2);
-        graph.getViewport().setMinX(timestamp[0].getTime());
-        android.icu.util.Calendar max=android.icu.util.Calendar.getInstance();
-        max.add(Calendar.DATE,1);
-        graph.getViewport().setMaxX(max.getTime().getTime());
-        graph.getViewport().setXAxisBoundsManual(true);
-        graph.getGridLabelRenderer().setHumanRounding(false,true);
-
-        // set titles for bar chart
-        series.setTitle("Total Steps");
-        series2.setTitle("Exercise Steps");
-        series3.setTitle("Goal");
-        graph.getLegendRenderer().setVisible(true);
-        graph.getLegendRenderer().setAlign(LegendRenderer.LegendAlign.TOP);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        Intent intent = getIntent();
+        String source = intent.getStringExtra("source");
+        if (source.equals("default")) {
+            user = new User();
+            SharedPreferences sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
+            SharedPrefManager sharedPrefManager = new SharedPrefManager(sharedPreferences, user);
+            sharedPrefManager.retrieveData();
+        } else {
+            user = new User();
+            user.setEmailAddress(source, false);
+            FireStoreManager fireStoreManager = new FireStoreManager(user);
+            fireStoreManager.retrieveData();
+        }
+
+        exercisechart = findViewById(R.id.exercisechart);
+        walkchart = findViewById(R.id.walkchart);
+        updateData();
+
+        Switch mySwitch = findViewById(R.id.walk_switch);
+        mySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                updateData();
+                if (isChecked) {
+                    exercisechart.setVisibility(View.VISIBLE);
+                    walkchart.setVisibility(View.GONE);
+                }
+                else{
+                    exercisechart.setVisibility(View.GONE);
+                    walkchart.setVisibility(View.VISIBLE);
+                }
+            }
+        });
+    }
+
+
     // function to go back to mainActivity
-    public void goBack(View view){
+    public void goBack(View view) {
         finish();
+    }
+
+    private void updateData(){
+        user=new User();
+        Random random=new Random();
+        ArrayList<Integer> one=new ArrayList<>();
+        for(int i=0;i<30;i++){
+            one.add(random.nextInt(5000));
+        }
+        ArrayList<Integer> two=new ArrayList<>();
+        for(int i=0;i<30;i++){
+            two.add(random.nextInt(5000));
+        }
+        user.setWalkHistory(one,false);
+        user.setExerciseHistory(two,false);
+        List<BarEntry> entries2 = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            entries2.add(new BarEntry(-i, i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(i)));
+        }
+        Log.d("",user.getWalkHistory().toString());
+        BarDataSet dataSet2 = new BarDataSet(entries2, "Walk");
+        BarData barData2 = new BarData(dataSet2);
+        XAxis xAxis2=walkchart.getXAxis();
+        YAxis yAxis2=walkchart.getAxisLeft();
+        xAxis2.setAxisMaximum(0);
+        xAxis2.setAxisMinimum(-30);
+        xAxis2.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        yAxis2.setAxisMinimum(0);
+
+        walkchart.setData(barData2);
+        walkchart.animateY(1000);
+        walkchart.setDragEnabled(true);
+        walkchart.getAxisRight().setEnabled(false);
+        walkchart.setTouchEnabled(true);
+        walkchart.setVisibleXRangeMaximum(15);
+        walkchart.moveViewToX(0);
+        walkchart.invalidate();
+
+
+        List<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            entries.add(new BarEntry(-i, i >= user.getExerciseHistory().size() ? 0 : user.getExerciseHistory().get(i)));
+        }
+        BarDataSet dataSet = new BarDataSet(entries, "Exercise");
+        dataSet.setColor(R.color.red);
+        BarData barData = new BarData(dataSet,dataSet2);
+        XAxis xAxis=exercisechart.getXAxis();
+        YAxis yAxis=exercisechart.getAxisLeft();
+        xAxis.setAxisMaximum(0);
+        xAxis.setAxisMinimum(-30);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        yAxis.setAxisMinimum(0);
+        exercisechart.setData(barData);
+        exercisechart.groupBars(-30,0.15f,0.01f);
+        exercisechart.getAxisRight().setEnabled(false);
+        exercisechart.animateY(1000);
+        exercisechart.setTouchEnabled(true);
+        exercisechart.setVisibleXRangeMaximum(10);
+        exercisechart.moveViewToX(0);
+        exercisechart.invalidate();
+
     }
 }
