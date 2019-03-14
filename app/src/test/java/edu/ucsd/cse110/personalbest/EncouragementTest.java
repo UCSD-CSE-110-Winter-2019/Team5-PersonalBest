@@ -77,7 +77,7 @@ public class EncouragementTest {
         ArrayList<Integer> walkhistroy = new ArrayList<>();
         walkhistroy.add(3000);
         walkhistroy.add(0);
-        test_user.setWalkHistory(walkhistroy);
+        test_user.setWalkHistory(walkhistroy,false);
 
         nextStepCount = 3499;
         test_user.setTotalSteps(nextStepCount, false);
