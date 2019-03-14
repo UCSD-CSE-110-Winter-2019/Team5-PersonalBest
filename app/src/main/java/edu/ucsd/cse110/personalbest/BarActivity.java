@@ -10,12 +10,16 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.charts.CombinedChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.data.CombinedData;
 import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.type.Color;
 
@@ -31,8 +35,8 @@ import edu.ucsd.cse110.personalbest.Managers.FireStoreManager;
 import edu.ucsd.cse110.personalbest.Managers.SharedPrefManager;
 
 public class BarActivity extends AppCompatActivity {
-    BarChart walkchart;
-    BarChart exercisechart;
+    CombinedChart walkchart;
+    CombinedChart exercisechart;
     User user;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +89,68 @@ public class BarActivity extends AppCompatActivity {
     }
 
     private void updateData(){
+        generateTestData();
+        List<BarEntry> entries2 = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            entries2.add(new BarEntry(i, 29-i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(29-i)));
+        }
+        Log.d("",user.getWalkHistory().toString());
+        BarDataSet dataSet2 = new BarDataSet(entries2, "Walk");
+        BarData barData2 = new BarData(dataSet2);
+        XAxis xAxis2=walkchart.getXAxis();
+        YAxis yAxis2=walkchart.getAxisLeft();
+        xAxis2.setAxisMaximum(29);
+        xAxis2.setAxisMinimum(0);
+        xAxis2.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        yAxis2.setAxisMinimum(0);
+
+        List<Entry> entries3 = new ArrayList<>();
+        for(int i=0;i<30;i++){
+            entries3.add(new Entry(i, 29-i >= user.getGoalHistory().size() ? 0 : user.getGoalHistory().get(29-i)));
+        }
+        LineDataSet lineDataSet=new LineDataSet(entries3,"Goal");
+        lineDataSet.setCircleColor(R.color.purple);
+        LineData lineData=new LineData(lineDataSet);
+        CombinedData combinedData=new CombinedData();
+        combinedData.setData(barData2);
+        combinedData.setData(lineData);
+        walkchart.setData(combinedData);
+        walkchart.animateY(1000);
+        walkchart.setDragEnabled(true);
+        walkchart.getAxisRight().setEnabled(false);
+        walkchart.setTouchEnabled(true);
+        walkchart.setVisibleXRangeMaximum(15);
+        walkchart.moveViewToX(29);
+        walkchart.invalidate();
+
+        List<BarEntry> entries = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            entries.add(new BarEntry(i,new float[]{29-i >= user.getExerciseHistory().size() ? 0 : user.getExerciseHistory().get(29-i),
+                    29-i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(29-i)}));
+        }
+        BarDataSet dataSet = new BarDataSet(entries, "Exercise");
+        dataSet.setColor(R.color.red);
+        BarData barData = new BarData(dataSet,dataSet2);
+        XAxis xAxis=exercisechart.getXAxis();
+        YAxis yAxis=exercisechart.getAxisLeft();
+        xAxis.setAxisMaximum(29);
+        xAxis.setAxisMinimum(0);
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
+        yAxis.setAxisMinimum(0);
+        CombinedData combinedData2=new CombinedData();
+        combinedData2.setData(barData);
+        combinedData2.setData(lineData);
+        exercisechart.setData(combinedData2);
+        exercisechart.getAxisRight().setEnabled(false);
+        exercisechart.animateY(1000);
+        exercisechart.setTouchEnabled(true);
+        exercisechart.setVisibleXRangeMaximum(10);
+        exercisechart.moveViewToX(29);
+        exercisechart.invalidate();
+
+    }
+
+    private void generateTestData(){
         user=new User();
         Random random=new Random();
         ArrayList<Integer> one=new ArrayList<>();
@@ -95,53 +161,12 @@ public class BarActivity extends AppCompatActivity {
         for(int i=0;i<30;i++){
             two.add(random.nextInt(5000));
         }
+        ArrayList<Integer> three=new ArrayList<>();
+        for(int i=0;i<30;i++){
+            three.add(random.nextInt(5000));
+        }
         user.setWalkHistory(one,false);
         user.setExerciseHistory(two,false);
-        List<BarEntry> entries2 = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            entries2.add(new BarEntry(-i, i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(i)));
-        }
-        Log.d("",user.getWalkHistory().toString());
-        BarDataSet dataSet2 = new BarDataSet(entries2, "Walk");
-        BarData barData2 = new BarData(dataSet2);
-        XAxis xAxis2=walkchart.getXAxis();
-        YAxis yAxis2=walkchart.getAxisLeft();
-        xAxis2.setAxisMaximum(0);
-        xAxis2.setAxisMinimum(-30);
-        xAxis2.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        yAxis2.setAxisMinimum(0);
-
-        walkchart.setData(barData2);
-        walkchart.animateY(1000);
-        walkchart.setDragEnabled(true);
-        walkchart.getAxisRight().setEnabled(false);
-        walkchart.setTouchEnabled(true);
-        walkchart.setVisibleXRangeMaximum(15);
-        walkchart.moveViewToX(0);
-        walkchart.invalidate();
-
-
-        List<BarEntry> entries = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
-            entries.add(new BarEntry(-i, i >= user.getExerciseHistory().size() ? 0 : user.getExerciseHistory().get(i)));
-        }
-        BarDataSet dataSet = new BarDataSet(entries, "Exercise");
-        dataSet.setColor(R.color.red);
-        BarData barData = new BarData(dataSet,dataSet2);
-        XAxis xAxis=exercisechart.getXAxis();
-        YAxis yAxis=exercisechart.getAxisLeft();
-        xAxis.setAxisMaximum(0);
-        xAxis.setAxisMinimum(-30);
-        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM_INSIDE);
-        yAxis.setAxisMinimum(0);
-        exercisechart.setData(barData);
-        exercisechart.groupBars(-30,0.15f,0.01f);
-        exercisechart.getAxisRight().setEnabled(false);
-        exercisechart.animateY(1000);
-        exercisechart.setTouchEnabled(true);
-        exercisechart.setVisibleXRangeMaximum(10);
-        exercisechart.moveViewToX(0);
-        exercisechart.invalidate();
-
+        user.setGoalHistory(three,false);
     }
 }
