@@ -1,6 +1,5 @@
 package edu.ucsd.cse110.personalbest;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -12,7 +11,6 @@ import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -26,14 +24,9 @@ import edu.ucsd.cse110.personalbest.fitness.FitnessServiceFactory;
 import edu.ucsd.cse110.personalbest.fitness.GoogleFitAdapter;
 
 import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     public static final String FITNESS_SERVICE_KEY = "FITNESS_SERVICE_KEY";
-    private static final String TAG = "MainActivity";
-    private static final long MS_IN_DAY = 86400000;
     // Default service key is GOOGLE_FIT for the MainActivity
     private String fitnessServiceKey = "GOOGLE_FIT";
     private FitnessService fitnessService;
@@ -67,8 +60,6 @@ public class MainActivity extends AppCompatActivity {
     private FireStoreManager fireStoreManager;
 
     public int[] weekSteps = new int[7];
-    public int[] weekWalks = new int[7];
-    public int[] weekGoals = new int[7];
 
     // For demonstration purpose
     private boolean demo = false;
@@ -292,21 +283,6 @@ public class MainActivity extends AppCompatActivity {
         this.exercise_step_label.setVisibility(visibility);
     }
 
-    /* check authentication during google fit setup */
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        // If authentication was required during google fit setup, this will be called after the user authenticates
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == fitnessService.getRequestCode()) {
-                if (!demo) {
-                    fitnessService.updateStepCount();
-                }
-            }
-        } else {
-            Log.e(TAG, "ERROR, google fit result code: " + resultCode);
-        }
-    }
-
     public void setCompleteContent(int stepCount) {
         this.user.setTotalSteps(stepCount, true);
         complete_content.setText(String.valueOf(stepCount));
@@ -350,7 +326,6 @@ public class MainActivity extends AppCompatActivity {
         intent.putExtra("source","default");
         startActivity(intent);
     }
-
 
     /* function to show the dialog to prompt user to enter new goal */
     private void promptDialog ( String title, String message, boolean isGoal ) {

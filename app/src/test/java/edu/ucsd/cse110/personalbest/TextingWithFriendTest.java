@@ -25,7 +25,7 @@ import static org.mockito.Mockito.when;
 import static org.robolectric.shadows.ShadowInstrumentation.getInstrumentation;
 
 @RunWith(RobolectricTestRunner.class)
-public class ChatMessageMockitoTest {
+public class TextingWithFriendTest {
     @Before
     public void setUp() throws Exception {
         Context context = getInstrumentation().getTargetContext();

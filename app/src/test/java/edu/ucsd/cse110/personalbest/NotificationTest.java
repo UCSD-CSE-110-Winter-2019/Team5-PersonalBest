@@ -21,7 +21,7 @@ import static org.mockito.Mockito.verify;
 import static org.robolectric.shadows.ShadowInstrumentation.getInstrumentation;
 
 @RunWith(RobolectricTestRunner.class)
-public class NotificationMockitoTest {
+public class NotificationTest {
 
     @Before
     public void setUp() throws Exception {

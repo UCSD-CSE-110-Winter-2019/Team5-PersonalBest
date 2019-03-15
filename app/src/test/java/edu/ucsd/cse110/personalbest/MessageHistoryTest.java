@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.robolectric.shadows.ShadowInstrumentation.getInstrumentation;
 
 @RunWith(RobolectricTestRunner.class)
-public class UserNameTest {
+public class MessageHistoryTest {
     private String from;
     private EditText userNameView;
     private SharedPreferences sharedPreferences;
