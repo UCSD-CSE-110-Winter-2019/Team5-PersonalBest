@@ -91,7 +91,6 @@ public class BarActivity extends AppCompatActivity {
     }
 
     private void updateData(){
-        //generateTestData();
         ArrayList<Integer> exerciseHistory= user.getExerciseHistory();
         ArrayList<Integer> walkHistory=user.getWalkHistory();
         ArrayList<Integer> goalHistory=user.getGoalHistory();
