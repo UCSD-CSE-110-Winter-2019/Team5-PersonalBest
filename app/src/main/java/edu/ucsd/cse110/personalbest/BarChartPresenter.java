@@ -1,4 +1,4 @@
-package edu.ucsd.cse110;
+package edu.ucsd.cse110.personalbest;
 
 import android.util.Log;
 

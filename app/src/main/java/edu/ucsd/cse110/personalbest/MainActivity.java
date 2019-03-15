@@ -70,6 +70,9 @@ public class MainActivity extends AppCompatActivity {
     public int[] weekWalks = new int[7];
     public int[] weekGoals = new int[7];
 
+    // For demonstration purpose
+    private boolean demo = false;
+
     // using google fit api
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -106,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         update_step_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                demo = false;
                 fitnessService.updateStepCount();
                 // setBarChart();
             }
@@ -156,6 +160,7 @@ public class MainActivity extends AppCompatActivity {
         add_steps_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                demo = true;
                 setCompleteContent(user.getTotalSteps() + 500);
             }
         });
@@ -164,10 +169,10 @@ public class MainActivity extends AppCompatActivity {
         add_day_button.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
+                demo = true;
                 int today = user.getCurrentDay();
                 user.setCurrentDay(today + 1);
                 user.compareCurrentDay(today);
-
             }
         });
 
@@ -184,7 +189,9 @@ public class MainActivity extends AppCompatActivity {
         exercise_step_label = findViewById(R.id.exercise_step_label);
 
         this.setGoalContent(this.user.getGoal());
-        fitnessService.updateStepCount();
+        if (!demo) {
+            fitnessService.updateStepCount();
+        }
 
         // when not in intentional walk mode
         if(state == 0) {
@@ -198,7 +205,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... strings) {
             final long currentTime = Calendar.getInstance().getTimeInMillis() / 1000;
-            fitnessService.updateStepCount();
+            if (!demo) {
+                fitnessService.updateStepCount();
+            }
             // create new intentional walk object
             user.setCurExercise(new Exercise(currentTime), true);
             int start_step = user.getTotalSteps();
@@ -209,7 +218,9 @@ public class MainActivity extends AppCompatActivity {
                     Thread.sleep(1000);
                     String[] publishable = new String[3];
 
-                    fitnessService.updateStepCount();
+                    if (!demo) {
+                        fitnessService.updateStepCount();
+                    }
 
                     // set the steps and time
                     user.getCurExercise().setStep(user.getTotalSteps() - start_step);
@@ -287,7 +298,9 @@ public class MainActivity extends AppCompatActivity {
         // If authentication was required during google fit setup, this will be called after the user authenticates
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == fitnessService.getRequestCode()) {
-                fitnessService.updateStepCount();
+                if (!demo) {
+                    fitnessService.updateStepCount();
+                }
             }
         } else {
             Log.e(TAG, "ERROR, google fit result code: " + resultCode);
@@ -396,8 +409,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        fitnessService.updateStepCount();
-        // setBarChart();
+        if (!demo) {
+            fitnessService.updateStepCount();
+        }
     }
 
     public User getUser() {

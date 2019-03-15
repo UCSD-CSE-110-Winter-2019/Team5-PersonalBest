@@ -89,7 +89,7 @@ public class BarActivity extends AppCompatActivity {
     }
 
     private void updateData(){
-        generateTestData();
+        // generateTestData();
         List<BarEntry> entries2 = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
             entries2.add(new BarEntry(i, 29-i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(29-i)));
