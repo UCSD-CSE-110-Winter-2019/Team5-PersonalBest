@@ -76,7 +76,6 @@ public class MainActivity extends AppCompatActivity {
                 return new GoogleFitAdapter(mainActivity);
             }
         });
-
         this.user = new User();
         this.sharedPreferences = getSharedPreferences("user_name", MODE_PRIVATE);
         this.sharedPrefManager = new SharedPrefManager(this.sharedPreferences, this.user);
