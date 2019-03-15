@@ -21,7 +21,7 @@ import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static org.junit.Assert.*;
-
+/*
 @RunWith(RobolectricTestRunner.class)
 public class FriendListActivityTest {
     FriendListActivity activity;
@@ -78,3 +78,4 @@ public class FriendListActivityTest {
         //assertEquals("/Users/" + testUserEmail + "/Friend list", activity.selfFriendList.getPath());
     }
 }
+*/
