@@ -97,7 +97,7 @@ public class User implements ISubject<IUserObserver> {
 
     public void compareCurrentDay(int currentDay) {
         for (int i = 0; i < this.currentDay - currentDay; i++) {
-            this.goalHistory.add(this.goal);
+            this.goalHistory.add(this.goalHistory.get(this.goalHistory.size() - 1));
             this.walkHistory.add(0);
             this.exerciseHistory.add(0);
         }
