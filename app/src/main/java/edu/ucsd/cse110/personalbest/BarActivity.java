@@ -23,10 +23,12 @@ import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.utils.ColorTemplate;
 import com.google.type.Color;
 
+import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -89,10 +91,16 @@ public class BarActivity extends AppCompatActivity {
     }
 
     private void updateData(){
-        generateTestData();
+        //generateTestData();
+        ArrayList<Integer> exerciseHistory= user.getExerciseHistory();
+        ArrayList<Integer> walkHistory=user.getWalkHistory();
+        ArrayList<Integer> goalHistory=user.getGoalHistory();
+        Collections.reverse(exerciseHistory);
+        Collections.reverse(walkHistory);
+        Collections.reverse(goalHistory);
         List<BarEntry> entries2 = new ArrayList<>();
         for (int i = 0; i < 30; i++) {
-            entries2.add(new BarEntry(i, 29-i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(29-i)));
+            entries2.add(new BarEntry(i, 29-i >= walkHistory.size() ? 0 : walkHistory.get(29-i)));
         }
         Log.d("",user.getWalkHistory().toString());
         BarDataSet dataSet2 = new BarDataSet(entries2, "Walk");
@@ -106,7 +114,7 @@ public class BarActivity extends AppCompatActivity {
 
         List<Entry> entries3 = new ArrayList<>();
         for(int i=0;i<30;i++){
-            entries3.add(new Entry(i, 29-i >= user.getGoalHistory().size() ? 0 : user.getGoalHistory().get(29-i)));
+            entries3.add(new Entry(i, 29-i >= goalHistory.size() ? 0 : goalHistory.get(29-i)));
         }
         LineDataSet lineDataSet=new LineDataSet(entries3,"Goal");
         lineDataSet.setCircleColor(R.color.purple);
@@ -124,9 +132,10 @@ public class BarActivity extends AppCompatActivity {
         walkchart.invalidate();
 
         List<BarEntry> entries = new ArrayList<>();
+
         for (int i = 0; i < 30; i++) {
-            entries.add(new BarEntry(i,new float[]{29-i >= user.getExerciseHistory().size() ? 0 : user.getExerciseHistory().get(29-i),
-                    29-i >= user.getWalkHistory().size() ? 0 : user.getWalkHistory().get(29-i)}));
+            entries.add(new BarEntry(30-exerciseHistory.size(),new float[]{29-i >= exerciseHistory.size() ? 0 : exerciseHistory.get(29-i),
+                    29-i >= walkHistory.size() ? 0 : walkHistory.get(29-i)}));
         }
         BarDataSet dataSet = new BarDataSet(entries, "Exercise");
         dataSet.setColor(R.color.red);
