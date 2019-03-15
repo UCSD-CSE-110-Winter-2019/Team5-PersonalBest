@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
@@ -66,6 +67,8 @@ public class FriendListActivity extends AppCompatActivity implements IcheckList{
         setContentView(R.layout.activity_friend_list);
 
         userEmail = getIntent().getSerializableExtra("user_email").toString();
+
+        FirebaseApp.initializeApp(this);
 
         users = FirebaseFirestore.getInstance().collection(COLLECTION_KEY);
         if (userEmail.equals("")) {
