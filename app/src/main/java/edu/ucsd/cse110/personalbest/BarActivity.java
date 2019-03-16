@@ -85,10 +85,6 @@ public class BarActivity extends AppCompatActivity {
     }
 
 
-    // function to go back to mainActivity
-    public void goBack(View view) {
-        finish();
-    }
 
     private void updateData(){
         ArrayList<Integer> exerciseHistory= user.getExerciseHistory();
@@ -176,5 +172,9 @@ public class BarActivity extends AppCompatActivity {
         user.setWalkHistory(one,false);
         user.setExerciseHistory(two,false);
         user.setGoalHistory(three,false);
+    }
+
+    public void endActivity(View view){
+        finish();
     }
 }
